@@ -2,7 +2,7 @@ package com.fiap.hospital.infra.domain;
 
 import java.util.List;
 
-public class roleUser {
+public class RoleUser {
     private int id;
     private String nome;
     private List<role> scope;

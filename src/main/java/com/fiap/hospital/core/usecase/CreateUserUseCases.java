@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateUserUseCases {
+
     private final SaveGateway saveGateway;
     private final PasswordEncoder passwordEncoder;
 

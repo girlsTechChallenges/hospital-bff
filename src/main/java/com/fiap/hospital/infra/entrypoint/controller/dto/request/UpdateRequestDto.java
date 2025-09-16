@@ -1,4 +1,4 @@
-package com.fiap.hospital.bff.infra.entrypoint.controller.dto.request;
+package com.fiap.hospital.infra.entrypoint.controller.dto.request;
 
 import com.fiap.hospital.infra.domain.TypeEnum;
 import jakarta.validation.constraints.Email;

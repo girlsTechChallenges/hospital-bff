@@ -1,8 +1,11 @@
-package com.fiap.hospital.infra.entrypoint.controller.mapper;
+package com.fiap.hospital.infra.mapper;
 
 
-import com.fiap.hospital.infra.domain.*;
+import com.fiap.hospital.infra.domain.TypeEnum;
+import com.fiap.hospital.infra.domain.User;
+import com.fiap.hospital.infra.domain.Token;
 import com.fiap.hospital.infra.entrypoint.controller.dto.request.*;
+import com.fiap.hospital.infra.entrypoint.controller.dto.response.UserResponseDto;
 import com.fiap.hospital.infra.persistence.*;
 import org.springframework.stereotype.Component;
 

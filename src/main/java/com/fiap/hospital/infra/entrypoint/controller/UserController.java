@@ -1,6 +1,11 @@
 package com.fiap.hospital.infra.entrypoint.controller;
 
 import com.fiap.hospital.core.usecase.*;
+import com.fiap.hospital.infra.domain.User;
+import com.fiap.hospital.infra.entrypoint.controller.dto.request.UpdateRequestDto;
+import com.fiap.hospital.infra.entrypoint.controller.dto.request.UserRequestDto;
+import com.fiap.hospital.infra.entrypoint.controller.dto.response.UserResponseDto;
+import com.fiap.hospital.infra.mapper.UserEntityMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -9,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.fiap.hospital.infra.entrypoint.controller.mapper.*;
 
 import java.util.List;
 import java.util.Optional;
