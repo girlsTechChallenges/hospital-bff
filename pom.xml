@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.fiap</groupId>
-	<artifactId>easyconsult</artifactId>
+	<artifactId>hospital-bff</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>easyconsult</name>
-	<description>Serviço de agendamento de consulta</description>
+	<name>hospital-bff</name>
+	<description>Serviço Hospital BFF </description>
 	<url/>
 	<licenses>
 		<license/>

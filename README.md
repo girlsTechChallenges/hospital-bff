@@ -39,7 +39,7 @@ docker-compose up app-db -d
 #### 3. Executar a aplicação
 
 ```bash
-java -jar target/easyconsult-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+java -jar target/hospital-bff-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
 ```
 
 #### 4. Verificar se está funcionando
@@ -66,6 +66,11 @@ Esta opção roda toda a aplicação (app + banco + Kong Gateway) no Docker.
 docker-compose up --build
 ```
 
+**Observações:**
+- O primeiro build pode demorar alguns minutos
+- A aplicação irá aguardar o banco de dados estar pronto
+- Todos os serviços serão inicializados automaticamente
+
 #### 2. Verificar se está funcionando
 
 - **Aplicação**: `http://localhost:8080`
@@ -73,10 +78,33 @@ docker-compose up --build
 - **Kong Admin**: `http://localhost:8001`
 - **Kong Manager**: `http://localhost:8002`
 
-#### 3. Para parar
+#### 3. Executar em background (detached mode)
 
 ```bash
+docker-compose up --build -d
+```
+
+#### 4. Ver logs da aplicação
+
+```bash
+# Ver todos os logs
+docker-compose logs
+
+# Ver apenas logs da aplicação
+docker-compose logs app
+
+# Seguir logs em tempo real
+docker-compose logs -f app
+```
+
+#### 5. Para parar
+
+```bash
+# Parar containers (preserva dados)
 docker-compose down
+
+# Parar e remover volumes (remove dados do banco)
+docker-compose down -v
 ```
 
 ---
@@ -111,8 +139,11 @@ O perfil padrão usa as configurações em `src/main/resources/application.prope
 ```properties
 # Banco via Docker
 spring.datasource.url=jdbc:postgresql://app-db:5432/postgres
-spring.datasource.password=${POSTGRES_PASSWORD}
+spring.datasource.username=postgres
+spring.datasource.password=postgres
 ```
+
+**Nota**: A aplicação conecta ao serviço `app-db` definido no `docker-compose.yml`.
 
 ## 🔑 Autenticação
 
@@ -127,7 +158,7 @@ Após iniciar a aplicação, a documentação da API estará disponível em:
 
 ## 🐛 Troubleshooting
 
-### Erro de conexão com banco
+### Erro de conexão com banco (Execução Local)
 ```
 Connection to localhost:5432 refused
 ```
