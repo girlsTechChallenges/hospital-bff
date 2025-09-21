@@ -33,3 +33,6 @@ build/
 .vscode/
 .devcontainer/
 *.log
+
+# Kong database data
+kong-db-data/
