@@ -1,8 +1,15 @@
 package com.fiap.hospital.bff.infra.persistence.user;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@Builder
 @Entity
 @Table(name = "usuarios")
 public class UserEntity {
@@ -11,107 +18,74 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    private String name;
 
     private String email;
 
     private String login;
 
-    private String senha;
+    private String password;
 
-    @Column(name = "data_alteracao")
-    private LocalDate dataAlteracao;
+    @Column(name = "change_date")
+    private LocalDate changeDate;
 
     @ManyToOne
-    @JoinColumn(name = "tipo_id", referencedColumnName = "id")
-    private TypeEntity tipo;
+    @JoinColumn(name = "type_id", referencedColumnName = "id")
+    private TypeEntity type;
 
     public UserEntity() {}
 
     private UserEntity(Builder builder) {
         this.id = builder.id;
-        this.nome = builder.nome;
+        this.name = builder.name;
         this.email = builder.email;
         this.login = builder.login;
-        this.senha = builder.senha;
-        this.dataAlteracao = builder.dataAlteracao;
-        this.tipo = builder.tipo;
-    
-    }
+        this.password = builder.password;
+        this.changeDate = builder.changeDate;
+        this.type = builder.type;
 
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public LocalDate getDataAlteracao() {
-        return dataAlteracao;
     }
 
     @PrePersist
     @PreUpdate
-    public void setDataAlteracao() {
-        this.dataAlteracao = LocalDate.now();
+    public void setChangeDate() {
+        this.changeDate = LocalDate.now();
     }
 
-    public TypeEntity getTipo() {
-        return tipo;
+    public TypeEntity getType() {
+        return type;
     }
 
-    public void setTipo(TypeEntity tipo) {
-        this.tipo = tipo;
+    public void setType(TypeEntity type) {
+        this.type = type;
     }
 
- 
-    public String getSenha() {
-        return senha;
+
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String senha) {
+        this.password = senha;
     }
 
     public static class Builder {
         private Long id;
-        private String nome;
+        private String name;
         private String email;
         private String login;
-        private String senha;
-        private LocalDate dataAlteracao;
-        private TypeEntity tipo;
-    
+        private String password;
+        private LocalDate changeDate;
+        private TypeEntity type;
+
 
         public Builder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public Builder nome(String nome) {
-            this.nome = nome;
+        public Builder name(String nome) {
+            this.name = name;
             return this;
         }
 
@@ -125,18 +99,18 @@ public class UserEntity {
             return this;
         }
 
-        public Builder senha(String senha) {
-            this.senha = senha;
+        public Builder password(String password) {
+            this.password = password;
             return this;
         }
 
-        public Builder dataAlteracao(LocalDate dataAlteracao) {
-            this.dataAlteracao = dataAlteracao;
+        public Builder changeDate(LocalDate changeDate) {
+            this.changeDate = changeDate;
             return this;
         }
 
-        public Builder tipo(TypeEntity tipo) {
-            this.tipo = tipo;
+        public Builder type(TypeEntity type) {
+            this.type = type;
             return this;
         }
 

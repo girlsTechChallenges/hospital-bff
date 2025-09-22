@@ -1,21 +1,88 @@
 package com.fiap.hospital.bff.infra.adapter.gateway;
 
+import java.util.Objects;
 import java.util.Optional;
-import org.springframework.stereotype.Component;
+
+import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
+import com.fiap.hospital.bff.infra.mapper.UserMapper;
+import com.fiap.hospital.bff.infra.persistence.user.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.fiap.hospital.bff.core.domain.model.user.User;
 import com.fiap.hospital.bff.core.outputport.UpdateGateway;
+import org.springframework.stereotype.Service;
+import java.util.List;
 
-@Component
+@Service
 public class UpdateGatewayImpl implements UpdateGateway {
+
+    private static final Logger log = LoggerFactory.getLogger(UpdateGatewayImpl.class);
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final TypeEntityRepositoryAdapter typeEntityRepositoryAdapter;
+    private final UserMapper mapper;
+
+    public UpdateGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TypeEntityRepositoryAdapter typeEntityRepositoryAdapter, UserMapper mapper) {
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.typeEntityRepositoryAdapter = typeEntityRepositoryAdapter;
+        this.mapper = mapper;
+    }
 
     @Override
     public Optional<User> update(Long idUser, User user) {
-        // TODO: Implementar lógica de atualização de usuário
-        return Optional.empty();
+        UserEntity findUser = userRepository.findById(idUser)
+                .orElseThrow(() -> new UserNotFoundException(idUser));
+
+        if (user != null) {
+            findUser.setName(user.getName());
+            findUser.setEmail(user.getEmail());
+            findUser.setPassword(user.getPassword());
+            TypeEntity typo = findOrCreateType(user.getType());
+            findUser.setType(typo);
+
+        }
+
+        UserEntity actualization = userRepository.save(findUser);
+        return Optional.ofNullable(mapper.toUserDomain(actualization));
     }
 
     @Override
     public void updatePassword(String email, String password) {
-        // TODO: Implementar lógica de atualização de senha
+
+        var passEncoded = passwordEncoder.encode(password);
+        var user = userRepository.findByEmail(email);
+
+        try {
+            if(Objects.isNull(user)){
+                throw new UserNotFoundException(email);
+            }
+            user.get().setPassword(passEncoded);
+            userRepository.save(user.get());
+
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException(email);
+
+        } catch (Exception e) {
+            log.error("Erro ao atualizar a senha do usuário", e);
+            throw new RuntimeException("Erro ao atualizar a senha do usuário", e);
+        }
+    }
+
+    private TypeEntity findOrCreateType(String formattedType, List<String> roles) {
+        return typeEntityRepositoryAdapter.findByNameType(formattedType)
+                .orElseGet(() -> createNewTypeIfNotExists(formattedType, roles));
+    }
+
+    private TypeEntity createNewTypeIfNotExists(String formattedType, List<String> roles) {
+        boolean typeAlreadyExists = typeEntityRepositoryAdapter.findAll().stream()
+                .anyMatch(type -> type.getName().trim().equalsIgnoreCase(formattedType));
+
+        if (typeAlreadyExists) {
+            throw new IllegalArgumentException("User type already exists with a similar name.");
+        }
+
+        return typeEntityRepositoryAdapter.save(new TypeEntity(null, formattedType.trim().toUpperCase(), roles));
     }
 }

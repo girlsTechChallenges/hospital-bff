@@ -67,7 +67,7 @@ public class GetGatewayImpl implements GetGateway {
 
         var now = Instant.now();
         var expiresIn = 300L;
-        var scope = user.map(UserEntity::getTipo);
+        var scope = user.map(UserEntity::getType);
 
         var claims = JwtClaimsSet.builder()
                 .issuer("BackendHospitalBff")
@@ -81,7 +81,7 @@ public class GetGatewayImpl implements GetGateway {
     }
 
      private boolean isLoginCorrect(String email, String password, PasswordEncoder passwordEncoder) {
-        var userPassword = userRepositoryAdapter.findByEmail(email).stream().map(UserEntity::getSenha).collect(Collectors.joining());
+        var userPassword = userRepositoryAdapter.findByEmail(email).stream().map(UserEntity::getPassword).collect(Collectors.joining());
         return passwordEncoder.matches(password, userPassword);
     }
 

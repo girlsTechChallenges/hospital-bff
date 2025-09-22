@@ -1,7 +1,13 @@
 package com.fiap.hospital.bff.infra.persistence.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "tipos")
 public class TypeEntity {
@@ -9,28 +15,18 @@ public class TypeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    private String name;
+
+    @ElementCollection
+    private List<String> roles;
 
     public TypeEntity() {}
 
-    public TypeEntity(Long id, String nome) {
+    public TypeEntity(Long id, String nome, List<String> roles) {
         this.id = id;
-        this.nome = nome;
+        this.name = nome;
+        this.roles = roles;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 }
