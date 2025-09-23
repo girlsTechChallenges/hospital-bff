@@ -1,5 +1,6 @@
 package com.fiap.hospital.bff.infra.mapper;
 
+import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UpdateRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.UserResponseDto;
 import com.fiap.hospital.bff.infra.persistence.user.TypeEntity;
@@ -10,9 +11,11 @@ import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserAuthDto
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserDto;
 import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.fiap.hospital.bff.infra.common.MessageConstants.USER_NOT_FOUND;
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class UserMapper {
@@ -52,24 +55,25 @@ public class UserMapper {
                 .login(user.getLogin())
                 .password(user.getPassword())
                 .changeDate(user.getChangeDate())
-                .type(typeEntityMapper.toTypeEntity(new TypeEntity(null, user.getType())))
+                .type(typeEntityMapper.toTypeEntity(new TypeEntity(null, user.getType().getNameType())))
                 .build();
     }
 
     public User toUserDomain(UserEntity userEntity) {
+
         return new User(
                 userEntity.getName(),
                 userEntity.getEmail(),
                 userEntity.getLogin(),
                 userEntity.getPassword(),
                 userEntity.getChangeDate(),
-                userEntity.getType().getName()
+                new Type(userEntity.getType().getNameType(), userEntity.getType().getRoles())
         );
     }
 
      public UserResponseDto toUserResponseDto(User user) {
 
-         return new UserResponseDto(user.getName(), user.getLogin(), user.getEmail(), user.getType());
+         return new UserResponseDto(user.getName(), user.getLogin(), user.getEmail(), user.getType().getNameType());
      }
 
      public UserResponseDto getUserByIdToUserResponseDto(Optional<User> optionalUser) {
@@ -77,7 +81,7 @@ public class UserMapper {
          User user = optionalUser.orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
 
        
-         return new UserResponseDto(user.getName(), user.getLogin(), user.getEmail(), user.getType());
+         return new UserResponseDto(user.getName(), user.getLogin(), user.getEmail(), user.getType().getNameType());
      }
 
 

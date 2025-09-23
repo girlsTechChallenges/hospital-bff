@@ -76,7 +76,7 @@ public class UpdateGatewayImpl implements UpdateGateway {
 
     private TypeEntity createNewTypeIfNotExists(String formattedType, List<String> roles) {
         boolean typeAlreadyExists = typeEntityRepositoryAdapter.findAll().stream()
-                .anyMatch(type -> type.getName().trim().equalsIgnoreCase(formattedType));
+                .anyMatch(type -> type.getNameType().trim().equalsIgnoreCase(formattedType));
 
         if (typeAlreadyExists) {
             throw new IllegalArgumentException("User type already exists with a similar name.");

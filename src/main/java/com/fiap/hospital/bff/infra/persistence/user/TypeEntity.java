@@ -15,7 +15,7 @@ public class TypeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String nameType;
 
     @ElementCollection
     private List<String> roles;
@@ -24,7 +24,7 @@ public class TypeEntity {
 
     public TypeEntity(Long id, String nome, List<String> roles) {
         this.id = id;
-        this.name = nome;
+        this.nameType = nome;
         this.roles = roles;
     }
 

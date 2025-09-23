@@ -1,5 +1,6 @@
 package com.fiap.hospital.bff.infra.entrypoint.controller.dto.request;
 
+import com.fiap.hospital.bff.core.domain.model.user.Type;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,6 @@ public record  UpdateRequestDto(
         @NotNull @NotBlank @Email
         String email,
         @NotNull @NotBlank @Size(min = 8, max = 100) String password,
-        @NotNull String type
+        @NotNull Type type
 ) {}
 

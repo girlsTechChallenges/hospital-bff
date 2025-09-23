@@ -15,15 +15,15 @@ public class TypeEntityMapper {
     }
 
     public TypeEntity toTypeEntity(TypeEntity user) {
-        return new TypeEntity(null, user.getName(), user.getRoles());
+        return new TypeEntity(null, user.getNameType(), user.getRoles());
     }
 
     public TypeEntity toTypeEntityEntity(TypeEntity typeEntity) {
-        return new TypeEntity(typeEntity.getId(), typeEntity.getName(), typeEntity.getRoles());
+        return new TypeEntity(typeEntity.getId(), typeEntity.getNameType(), typeEntity.getRoles());
     }
 
     public TypeEntityResponse typeUserResponse(TypeEntity typeUser) {
-        return new TypeEntityResponse(typeUser.getId(), typeUser.getName(), typeUser.getRoles());
+        return new TypeEntityResponse(typeUser.getId(), typeUser.getNameType(), typeUser.getRoles());
     }
 
     public TypeEntityResponse typeUserResponse(Optional<TypeEntity> response) {
