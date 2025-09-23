@@ -29,4 +29,6 @@ public class TypeEntity {
     }
 
 
+    public TypeEntity(Object o, String type) {
+    }
 }

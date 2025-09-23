@@ -20,13 +20,13 @@ public class User {
     private String login;
     private String password;
     private LocalDate changeDate;
-    private String type;
+    private Type type;
 
     public User(
             String name,
             String email,
             String password,
-            String type) {
+            Type type) {
         this.name = name;
         this.email = email;
         this.password = password;
