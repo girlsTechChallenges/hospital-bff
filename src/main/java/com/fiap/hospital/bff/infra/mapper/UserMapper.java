@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.fiap.hospital.bff.infra.common.MessageConstants.USER_NOT_FOUND;
-import static java.util.stream.Collectors.toList;
 
 @Component
 public class UserMapper {
@@ -48,15 +47,19 @@ public class UserMapper {
      }
 
     public UserEntity toUserEntity(User user) {
+        TypeEntity type = new TypeEntity();
+        type.setNameType(user.getType().getNameType());
+        type.setRoles(user.getType().getRoles());
 
-        return new UserEntity.Builder()
-                .name(user.getName())
-                .email(user.getEmail())
-                .login(user.getLogin())
-                .password(user.getPassword())
-                .changeDate(user.getChangeDate())
-                .type(typeEntityMapper.toTypeEntity(new TypeEntity(null, user.getType().getNameType())))
-                .build();
+        return new UserEntity(
+                null,
+                user.getName(),
+                user.getEmail(),
+                user.getLogin(),
+                user.getPassword(),
+                user.getChangeDate(),
+                type
+        );
     }
 
     public User toUserDomain(UserEntity userEntity) {
@@ -67,7 +70,7 @@ public class UserMapper {
                 userEntity.getLogin(),
                 userEntity.getPassword(),
                 userEntity.getChangeDate(),
-                new Type(userEntity.getType().getNameType(), userEntity.getType().getRoles())
+                new Type(userEntity.getTypes().getNameType(), userEntity.getTypes().getRoles())
         );
     }
 

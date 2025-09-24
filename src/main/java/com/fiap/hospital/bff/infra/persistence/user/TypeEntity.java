@@ -1,15 +1,17 @@
 package com.fiap.hospital.bff.infra.persistence.user;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "tipos")
+@Builder
+@Table(name = "types")
 public class TypeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +28,5 @@ public class TypeEntity {
         this.id = id;
         this.nameType = nome;
         this.roles = roles;
-    }
-
-
-    public TypeEntity(Object o, String type) {
     }
 }

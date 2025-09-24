@@ -40,7 +40,7 @@ public class UpdateGatewayImpl implements UpdateGateway {
             findUser.setEmail(user.getEmail());
             findUser.setPassword(user.getPassword());
             TypeEntity typo = findOrCreateType(user.getType().getNameType(), user.getType().getRoles());
-            findUser.setType(typo);
+            findUser.setTypes(typo);
         }
 
         UserEntity actualization = userRepository.save(findUser);

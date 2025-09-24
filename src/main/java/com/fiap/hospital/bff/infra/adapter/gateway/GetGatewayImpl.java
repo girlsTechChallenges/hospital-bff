@@ -67,7 +67,7 @@ public class GetGatewayImpl implements GetGateway {
 
         var now = Instant.now();
         var expiresIn = 300L;
-        var scope = user.map(UserEntity::getType);
+        var scope = user.map(UserEntity::getTypes);
 
         var claims = JwtClaimsSet.builder()
                 .issuer("BackendHospitalBff")
