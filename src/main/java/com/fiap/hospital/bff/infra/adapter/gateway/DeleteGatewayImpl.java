@@ -31,7 +31,7 @@ public class DeleteGatewayImpl implements DeleteGateway {
     @Override
     public Optional<User> deleteById(Long idUser) {
         UserEntity findUser = userRepository.findById(idUser)
-                .orElseThrow(() -> new TypeNotPresentException(idUser));
+                .orElseThrow(() -> new UserNotFoundException(idUser));
 
         Optional<UserEntity> user = userRepository.findById(idUser);
         userRepository.deleteById(idUser);
