@@ -13,8 +13,11 @@ import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 import com.fiap.hospital.bff.infra.persistence.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SaveGatewayImpl implements SaveGateway {
@@ -50,7 +53,7 @@ public class SaveGatewayImpl implements SaveGateway {
     @Override
     public Type saveType(Type type) {
         String normalizedType = normalizeTypeName(type.getNameType());
-        TypeEntity typeEntity = findOrCreateType(normalizedType);
+        TypeEntity typeEntity = findOrCreateType(normalizedType, type.getRoles());
         Type createdTypeUser = typeMapper.toTypeEntityDomain(typeEntity);
 
         return createdTypeUser;
@@ -63,8 +66,17 @@ public class SaveGatewayImpl implements SaveGateway {
         return name.trim().toUpperCase();
     }
 
-    private TypeEntity findOrCreateType(String normalizedType) {
+    private TypeEntity findOrCreateType(String normalizedType, List<String> roles) {
         return typeUserRepositoryAdapter.findByNameType(normalizedType)
-                .orElseGet(() -> safelySaveType(normalizedType));
+                .orElseGet(() -> safelySaveType(normalizedType, roles));
+    }
+
+    private TypeEntity safelySaveType(String normalizedType, List<String> roles) {
+        try {
+            return typeUserRepositoryAdapter.save(new TypeEntity(null, normalizedType, roles));
+        } catch (DataIntegrityViolationException e) {
+            return typeUserRepositoryAdapter.findByNameType(normalizedType)
+                    .orElseThrow(() -> new IllegalArgumentException("User type already exists."));
+        }
     }
 }
