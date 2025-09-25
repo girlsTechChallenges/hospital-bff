@@ -3,6 +3,7 @@ package com.fiap.hospital.bff.core.outputport;
 import java.util.List;
 import java.util.Optional;
 import com.fiap.hospital.bff.core.domain.model.token.Token;
+import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.core.domain.model.user.User;
 
 public interface GetGateway {
@@ -14,5 +15,7 @@ public interface GetGateway {
 
     //Authentication
     Token validateLogin(String email, String password);
-    
+
+    List<Type> getAllTypes();
+    Optional<Type> getTypeById(Long idUser);
 }

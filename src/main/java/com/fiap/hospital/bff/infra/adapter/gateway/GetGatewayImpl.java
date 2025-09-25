@@ -4,6 +4,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.fiap.hospital.bff.core.domain.model.user.Type;
+import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
+import com.fiap.hospital.bff.infra.persistence.user.TypeEntityRepositoryAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,18 +33,22 @@ public class GetGatewayImpl implements GetGateway {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
     private final UserRepositoryAdapter userRepositoryAdapter;
-    private final UserMapper mapper;
+    private final TypeEntityRepositoryAdapter typeEntityRepositoryAdapter;
+    private final UserMapper userMapper;
+    private final TypeEntityMapper typeMapper;
 
-    public GetGatewayImpl(UserRepositoryAdapter userRepositoryAdapter, UserMapper mapper, BCryptPasswordEncoder passwordEncoder, JwtEncoder jwtEncoder) {
+    public GetGatewayImpl(UserRepositoryAdapter userRepositoryAdapter, UserMapper userMapper, BCryptPasswordEncoder passwordEncoder, JwtEncoder jwtEncoder, TypeEntityRepositoryAdapter typeEntityRepositoryAdapter, TypeEntityMapper typeMapper) {
         this.userRepositoryAdapter = userRepositoryAdapter;
-        this.mapper = mapper;
+        this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtEncoder = jwtEncoder;
+        this.typeEntityRepositoryAdapter = typeEntityRepositoryAdapter;
+        this.typeMapper = typeMapper;
     }
 
     @Override
     public List<User> getAll() {
-        return userRepositoryAdapter.findAll().stream().map(mapper::toUserDomain).toList();
+        return userRepositoryAdapter.findAll().stream().map(userMapper::toUserDomain).toList();
     }
 
     @Override
@@ -48,14 +56,14 @@ public class GetGatewayImpl implements GetGateway {
         var findUser = userRepositoryAdapter.findById(idUser)
                 .orElseThrow(() -> new UserNotFoundException(idUser));
 
-        return Optional.ofNullable(mapper.toUserDomain(findUser));
+        return Optional.ofNullable(userMapper.toUserDomain(findUser));
     }
 
 
     @Override
     public Optional<User> findByEmail(String email) {
         Optional<UserEntity> user = userRepositoryAdapter.findByEmail(email);
-        return user.map(mapper::toUserDomain);
+        return user.map(userMapper::toUserDomain);
     }
 
     public Token validateLogin(String email, String password) {
@@ -85,4 +93,16 @@ public class GetGatewayImpl implements GetGateway {
         return passwordEncoder.matches(password, userPassword);
     }
 
+    @Override
+    public List<Type> getAllTypes() {
+        return typeEntityRepositoryAdapter.findAll().stream().map(typeMapper::toTypeEntityDomain).toList();
+    }
+
+    @Override
+    public Optional<Type> getTypeById(Long idType) {
+        var findType = typeEntityRepositoryAdapter.findById(idType)
+                .orElseThrow(() -> new UserNotFoundException(idType));
+
+        return Optional.ofNullable(typeMapper.toTypeEntityDomain(findType));
+    }
 }

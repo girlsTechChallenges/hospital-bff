@@ -1,10 +1,14 @@
 package com.fiap.hospital.bff.infra.adapter.gateway;
 
 
+import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.core.domain.model.user.User;
 import com.fiap.hospital.bff.core.outputport.SaveGateway;
 import com.fiap.hospital.bff.infra.exception.UserAlreadyRegisteredException;
+import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
+import com.fiap.hospital.bff.infra.persistence.user.TypeEntity;
+import com.fiap.hospital.bff.infra.persistence.user.TypeEntityRepositoryAdapter;
 import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 import com.fiap.hospital.bff.infra.persistence.user.UserRepository;
 import org.slf4j.Logger;
@@ -18,12 +22,16 @@ public class SaveGatewayImpl implements SaveGateway {
     private static final Logger log = LoggerFactory.getLogger(SaveGatewayImpl.class);
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
+    private final TypeEntityMapper typeMapper;
+    private final TypeEntityRepositoryAdapter typeUserRepositoryAdapter;
 
-    public SaveGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, UserMapper mapper) {
+    public SaveGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, UserMapper userMapper, TypeEntityMapper typeMapper, TypeEntityRepositoryAdapter typeUserRepositoryAdapter) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
-        this.mapper = mapper;
+        this.userMapper = userMapper;
+        this.typeMapper = typeMapper;
+        this.typeUserRepositoryAdapter = typeUserRepositoryAdapter;
     }
 
     @Override
@@ -35,7 +43,28 @@ public class SaveGatewayImpl implements SaveGateway {
                     );
                 });
 
-        UserEntity userEntity = mapper.toUserEntity(user);
-        return mapper.toUserDomain(userRepository.save(userEntity));
+        UserEntity userEntity = userMapper.toUserEntity(user);
+        return userMapper.toUserDomain(userRepository.save(userEntity));
+    }
+
+    @Override
+    public Type saveType(Type type) {
+        String normalizedType = normalizeTypeName(type.getNameType());
+        TypeEntity typeEntity = findOrCreateType(normalizedType);
+        Type createdTypeUser = typeMapper.toTypeEntityDomain(typeEntity);
+
+        return createdTypeUser;
+    }
+
+    private String normalizeTypeName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("User type cannot be empty.");
+        }
+        return name.trim().toUpperCase();
+    }
+
+    private TypeEntity findOrCreateType(String normalizedType) {
+        return typeUserRepositoryAdapter.findByNameType(normalizedType)
+                .orElseGet(() -> safelySaveType(normalizedType));
     }
 }

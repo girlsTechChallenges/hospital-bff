@@ -1,6 +1,8 @@
 package com.fiap.hospital.bff.infra.adapter.gateway;
 
 import java.util.Optional;
+
+import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
 import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
@@ -29,7 +31,7 @@ public class DeleteGatewayImpl implements DeleteGateway {
     @Override
     public Optional<User> deleteById(Long idUser) {
         UserEntity findUser = userRepository.findById(idUser)
-                .orElseThrow(() -> new UserNotFoundException(idUser));
+                .orElseThrow(() -> new TypeNotPresentException(idUser));
 
         Optional<UserEntity> user = userRepository.findById(idUser);
         userRepository.deleteById(idUser);

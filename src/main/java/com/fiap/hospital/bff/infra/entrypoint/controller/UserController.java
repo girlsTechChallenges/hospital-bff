@@ -9,6 +9,7 @@ import com.fiap.hospital.bff.core.usecase.CreateUseCase;
 import com.fiap.hospital.bff.core.usecase.DeleteUseCase;
 import com.fiap.hospital.bff.core.usecase.GetUseCase;
 import com.fiap.hospital.bff.core.usecase.UpdateUseCase;
+import com.fiap.hospital.bff.infra.entrypoint.controller.docs.UserControllerDocs;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UpdateRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserDto;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.UserResponseDto;
@@ -27,7 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements UserControllerDocs {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final SaveGateway saveGateway;
