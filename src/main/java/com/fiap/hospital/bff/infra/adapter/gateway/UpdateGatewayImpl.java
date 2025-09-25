@@ -3,6 +3,7 @@ package com.fiap.hospital.bff.infra.adapter.gateway;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
 import com.fiap.hospital.bff.infra.persistence.user.*;

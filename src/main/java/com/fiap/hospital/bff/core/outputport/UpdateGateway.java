@@ -13,6 +13,4 @@ public interface UpdateGateway {
 
     //Authentication
     void updatePassword(String email, String password);
-
-    Optional<Type> update(Long id, Type type);
 }

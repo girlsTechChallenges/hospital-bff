@@ -31,20 +31,6 @@ public interface TypeUserControllerDocs {
     })
     ResponseEntity<TypeEntityResponse> create(@Valid @RequestBody TypeEntityRequestDto request);
 
-    @Operation(summary = "Update User Type", description = "Modifies an existing user type.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User type successfully updated.",
-                    content = @Content(schema = @Schema(implementation = TypeEntityResponse.class))),
-            @ApiResponse(responseCode = "404", description = "User type not found.",
-                    content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
-            @ApiResponse(responseCode = "409", description = "User type already exists.",
-                    content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error.",
-                    content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
-    })
-    ResponseEntity<TypeEntityResponse> update(@PathVariable @NotNull Long id,
-                                            @Valid @RequestBody TypeEntityRequestDto request);
-
     @Operation(summary = "List User Types", description = "Retrieves all registered user types.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User types successfully retrieved.",
