@@ -11,6 +11,9 @@ public interface UpdateGateway {
     //User    
     Optional<User> update(Long idUser, User user);
 
+    //Type
+    Optional<Type> update(Long idType, Type type);
+
     //Authentication
     void updatePassword(String email, String password);
 }

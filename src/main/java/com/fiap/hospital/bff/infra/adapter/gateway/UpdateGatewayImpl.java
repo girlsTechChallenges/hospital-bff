@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
+import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
 import com.fiap.hospital.bff.infra.persistence.user.*;
 import org.slf4j.Logger;
@@ -23,12 +24,14 @@ public class UpdateGatewayImpl implements UpdateGateway {
     private final UserRepository userRepository;
     private final TypeEntityRepositoryAdapter typeEntityRepositoryAdapter;
     private final UserMapper mapper;
+    private final TypeEntityMapper typeMapper;
 
-    public UpdateGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TypeEntityRepositoryAdapter typeEntityRepositoryAdapter, UserMapper mapper) {
+    public UpdateGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TypeEntityRepositoryAdapter typeEntityRepositoryAdapter, UserMapper mapper, TypeEntityMapper typeMapper) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.typeEntityRepositoryAdapter = typeEntityRepositoryAdapter;
         this.mapper = mapper;
+        this.typeMapper = typeMapper;
     }
 
     @Override
@@ -46,6 +49,23 @@ public class UpdateGatewayImpl implements UpdateGateway {
 
         UserEntity actualization = userRepository.save(findUser);
         return Optional.ofNullable(mapper.toUserDomain(actualization));
+    }
+
+    @Override
+    public Optional<Type>  update(final Long idType, Type type) {
+
+        TypeEntity existingType = typeEntityRepositoryAdapter.findById(idType)
+                .orElseThrow(() -> {
+                    log.warn("TypeUser with id {} not found for update", idType);
+                    return new UserNotFoundException("TypeUser not found with id: " + idType);
+                });
+
+        existingType.setNameType(type.getNameType());
+        TypeEntity updatedEntity = typeEntityRepositoryAdapter.save(existingType);
+        Type updatedTypeUser = typeMapper.toTypeEntityDomain(updatedEntity);
+
+        log.info("TypeUser updated successfully: {}", updatedTypeUser);
+        return Optional.ofNullable(updatedTypeUser);
     }
 
     @Override
