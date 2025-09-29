@@ -53,9 +53,10 @@ public class UpdateGatewayImpl implements UpdateGateway {
 
     @Override
     public Optional<Type>  update(Type type) {
-        TypeEntity existingType = typeEntityRepositoryAdapter.findByNameType(type.getNameType())
+        String normalizedType = normalizeTypeName(type.getNameType());
+        TypeEntity existingType = typeEntityRepositoryAdapter.findByNameType(normalizedType)
                 .orElseThrow(() -> {
-                    log.warn("TypeUser with id {} not found for update", type.getNameType());
+                    log.warn("TypeUser with nameType {} not found for update", type.getNameType());
                     return new UserNotFoundException("TypeUser not found with id: " + type.getNameType());
                 });
 
@@ -65,6 +66,13 @@ public class UpdateGatewayImpl implements UpdateGateway {
 
         log.info("TypeUser updated successfully: {}", updatedTypeUser);
         return Optional.ofNullable(updatedTypeUser);
+    }
+
+    private String normalizeTypeName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("User type cannot be empty.");
+        }
+        return name.trim().toUpperCase();
     }
 
     @Override

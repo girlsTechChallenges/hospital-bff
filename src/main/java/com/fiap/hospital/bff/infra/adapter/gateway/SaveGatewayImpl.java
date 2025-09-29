@@ -27,14 +27,14 @@ public class SaveGatewayImpl implements SaveGateway {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final TypeEntityMapper typeMapper;
-    private final TypeEntityRepositoryAdapter typeUserRepositoryAdapter;
+    private final TypeEntityRepositoryAdapter typeEntityRepositoryAdapter;
 
     public SaveGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, UserMapper userMapper, TypeEntityMapper typeMapper, TypeEntityRepositoryAdapter typeUserRepositoryAdapter) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.typeMapper = typeMapper;
-        this.typeUserRepositoryAdapter = typeUserRepositoryAdapter;
+        this.typeEntityRepositoryAdapter = typeUserRepositoryAdapter;
     }
 
     @Override
@@ -67,15 +67,15 @@ public class SaveGatewayImpl implements SaveGateway {
     }
 
     private TypeEntity findOrCreateType(String normalizedType, List<String> roles) {
-        return typeUserRepositoryAdapter.findByNameType(normalizedType)
+        return typeEntityRepositoryAdapter.findByNameType(normalizedType)
                 .orElseGet(() -> safelySaveType(normalizedType, roles));
     }
 
     private TypeEntity safelySaveType(String normalizedType, List<String> roles) {
         try {
-            return typeUserRepositoryAdapter.save(new TypeEntity(null, normalizedType, roles));
+            return typeEntityRepositoryAdapter.save(new TypeEntity(null, normalizedType, roles));
         } catch (DataIntegrityViolationException e) {
-            return typeUserRepositoryAdapter.findByNameType(normalizedType)
+            return typeEntityRepositoryAdapter.findByNameType(normalizedType)
                     .orElseThrow(() -> new IllegalArgumentException("User type already exists."));
         }
     }
