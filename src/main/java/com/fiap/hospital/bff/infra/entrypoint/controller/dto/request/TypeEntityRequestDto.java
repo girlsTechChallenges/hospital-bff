@@ -9,6 +9,5 @@ public record TypeEntityRequestDto(
         @NotNull
         @NotEmpty
         String nameType,
-
         List<String> roles) {
 }
