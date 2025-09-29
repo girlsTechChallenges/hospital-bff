@@ -52,12 +52,11 @@ public class UpdateGatewayImpl implements UpdateGateway {
     }
 
     @Override
-    public Optional<Type>  update(final Long idType, Type type) {
-
-        TypeEntity existingType = typeEntityRepositoryAdapter.findById(idType)
+    public Optional<Type>  update(Type type) {
+        TypeEntity existingType = typeEntityRepositoryAdapter.findByNameType(type.getNameType())
                 .orElseThrow(() -> {
-                    log.warn("TypeUser with id {} not found for update", idType);
-                    return new UserNotFoundException("TypeUser not found with id: " + idType);
+                    log.warn("TypeUser with id {} not found for update", type.getNameType());
+                    return new UserNotFoundException("TypeUser not found with id: " + type.getNameType());
                 });
 
         existingType.setNameType(type.getNameType());

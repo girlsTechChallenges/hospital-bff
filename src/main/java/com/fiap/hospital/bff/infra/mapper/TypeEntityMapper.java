@@ -14,11 +14,11 @@ import static com.fiap.hospital.bff.infra.common.MessageConstants.USER_NOT_FOUND
 public class TypeEntityMapper {
 
     public Type toTypeEntityDomain(TypeEntityRequestDto typeRequestDto ) {
-        return new Type(typeRequestDto.type(), typeRequestDto.roles());
+        return new Type(typeRequestDto.nameType(), typeRequestDto.roles());
     }
 
     public Type toTypeDomain(TypeEntityRequestDto typeEntityRequestDto) {
-        return new Type(typeEntityRequestDto.type(), typeEntityRequestDto.roles());
+        return new Type(typeEntityRequestDto.nameType(), typeEntityRequestDto.roles());
     }
 
     public TypeEntity toTypeEntity(Type type) {

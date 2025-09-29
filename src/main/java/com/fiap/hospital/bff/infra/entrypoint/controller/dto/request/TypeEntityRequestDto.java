@@ -8,7 +8,7 @@ import java.util.List;
 public record TypeEntityRequestDto(
         @NotNull
         @NotEmpty
-        String type,
+        String nameType,
 
         List<String> roles) {
 }
