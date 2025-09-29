@@ -1,10 +1,8 @@
 package com.fiap.hospital.bff.infra.mapper;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
-import com.fiap.hospital.bff.core.domain.model.user.User;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.TypeEntityRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.TypeEntityResponse;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.UserResponseDto;
 import com.fiap.hospital.bff.infra.persistence.user.TypeEntity;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +29,13 @@ public class TypeEntityMapper {
         return new Type(typeEntity.getNameType(), typeEntity.getRoles());
     }
 
-    public TypeEntityResponse typeTypeResponse(Type typeUser) {
+    public TypeEntityResponse typeEntityResponse(Type typeUser) {
         return new TypeEntityResponse(typeUser.getNameType(), typeUser.getRoles());
+    }
+
+    public TypeEntityResponse typeEntityResponse(Optional<Type> response) {
+        return response.map(this::typeEntityResponse)
+                .orElseThrow(() -> new IllegalArgumentException("TypeUser not found"));
     }
 
     public TypeEntityResponse getTypeByIdToTypeResponseDto(Optional<Type> optionalType) {

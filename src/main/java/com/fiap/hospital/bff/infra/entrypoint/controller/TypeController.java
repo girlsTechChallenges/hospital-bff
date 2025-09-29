@@ -10,6 +10,7 @@ import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.TypeEntityR
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.TypeEntityResponse;
 import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class TypeController implements TypeUserControllerDocs {
     public ResponseEntity<TypeEntityResponse> create(@Valid @RequestBody TypeEntityRequestDto request) {
         log.info("Received request to create type type: {}", request);
         var resp = saveGateway.saveType(typeEntityMapper.toTypeEntityDomain(request));
-        return ResponseEntity.status(HttpStatus.CREATED).body(typeEntityMapper.typeTypeResponse(resp));
+        return ResponseEntity.status(HttpStatus.CREATED).body(typeEntityMapper.typeEntityResponse(resp));
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,7 +60,7 @@ public class TypeController implements TypeUserControllerDocs {
 
         Type rep = typeEntityMapper.toTypeEntityDomain(request);
         var response = updateGateway.update(id, rep);
-        var responseDto = typeEntityMapper.typeTypeResponse(response);
+        var responseDto = typeEntityMapper.typeEntityResponse(response);
 
         log.info("Type user with ID: {} updated successfully", id);
         return ResponseEntity.accepted().body(responseDto);
