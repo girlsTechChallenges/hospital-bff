@@ -70,7 +70,7 @@ public class UserMapper {
                 userEntity.getLogin(),
                 userEntity.getPassword(),
                 userEntity.getChangeDate(),
-                new Type(userEntity.getTypes().getNameType(), userEntity.getTypes().getRoles())
+                new Type(userEntity.getTypes().getId(), userEntity.getTypes().getNameType(), userEntity.getTypes().getRoles())
         );
     }
 

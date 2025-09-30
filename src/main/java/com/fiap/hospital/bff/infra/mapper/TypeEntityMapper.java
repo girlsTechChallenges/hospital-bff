@@ -14,11 +14,11 @@ import static com.fiap.hospital.bff.infra.common.MessageConstants.USER_NOT_FOUND
 public class TypeEntityMapper {
 
     public Type toTypeEntityDomain(TypeEntityRequestDto typeRequestDto ) {
-        return new Type(typeRequestDto.nameType(), typeRequestDto.roles());
+        return new Type(null, typeRequestDto.nameType(), typeRequestDto.roles());
     }
 
     public Type toTypeDomain(TypeEntityRequestDto typeEntityRequestDto) {
-        return new Type(typeEntityRequestDto.nameType(), typeEntityRequestDto.roles());
+        return new Type(null, typeEntityRequestDto.nameType(), typeEntityRequestDto.roles());
     }
 
     public TypeEntity toTypeEntity(Type type) {
@@ -26,11 +26,14 @@ public class TypeEntityMapper {
     }
 
     public Type toTypeEntityDomain(TypeEntity typeEntity) {
-        return new Type(typeEntity.getNameType(), typeEntity.getRoles());
+        return new Type(typeEntity.getId(), typeEntity.getNameType(), typeEntity.getRoles());
     }
 
     public TypeEntityResponse typeEntityResponse(Type typeUser) {
-        return new TypeEntityResponse(typeUser.getNameType(), typeUser.getRoles());
+        return new TypeEntityResponse(
+                typeUser.getId(),
+                typeUser.getNameType(),
+                typeUser.getRoles());
     }
 
     public TypeEntityResponse typeEntityResponse(Optional<Type> response) {
@@ -42,10 +45,10 @@ public class TypeEntityMapper {
 
         Type type = optionalType.orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
 
-        return new TypeEntityResponse(type.getNameType(), type.getRoles());
+        return new TypeEntityResponse(type.getId(), type.getNameType(), type.getRoles());
     }
 
     public TypeEntityResponse toTypeResponseDto(Type type) {
-        return new TypeEntityResponse(type.getNameType(), type.getRoles());
+        return new TypeEntityResponse(type.getId(), type.getNameType(), type.getRoles());
     }
 }

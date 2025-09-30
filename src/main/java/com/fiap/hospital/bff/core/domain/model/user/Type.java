@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Type {
+    Long id;
     String nameType;
     List<String> roles;
 }
