@@ -8,4 +8,5 @@ import java.util.Optional;
 @Repository
 public interface TypeEntityRepositoryAdapter extends JpaRepository<TypeEntity, Long> {
     Optional<TypeEntity> findByNameType(String name);
+    Optional<TypeEntity> findById(String name);
 }

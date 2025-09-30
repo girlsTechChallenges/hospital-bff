@@ -54,13 +54,14 @@ public class UpdateGatewayImpl implements UpdateGateway {
     @Override
     public Optional<Type>  update(Type type) {
         String normalizedType = normalizeTypeName(type.getNameType());
-        TypeEntity existingType = typeEntityRepositoryAdapter.findByNameType(normalizedType)
+        TypeEntity existingType = typeEntityRepositoryAdapter.findById(type.getId())
                 .orElseThrow(() -> {
                     log.warn("TypeUser with nameType {} not found for update", type.getNameType());
                     return new UserNotFoundException("TypeUser not found with id: " + type.getNameType());
                 });
 
-        existingType.setNameType(type.getNameType());
+        existingType.setNameType(normalizedType);
+        existingType.setRoles(type.getRoles());
         TypeEntity updatedEntity = typeEntityRepositoryAdapter.save(existingType);
         Type updatedTypeUser = typeMapper.toTypeEntityDomain(updatedEntity);
 
