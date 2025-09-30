@@ -54,12 +54,12 @@ public class TypeController implements TypeUserControllerDocs {
         return ResponseEntity.ok(resp.stream().map(typeEntityMapper::toTypeResponseDto).toList());
     }
 
-    @PutMapping(value = "/{nameType}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TypeEntityResponse> update(@Valid @RequestBody TypeEntityRequestDto request) {
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TypeEntityResponse> update(@PathVariable @NotNull Long id,@Valid @RequestBody TypeEntityRequestDto request) {
         log.info("Received request to update type user: {}", request);
 
         Type rep = typeEntityMapper.toTypeEntityDomain(request);
-        var response = updateGateway.update(rep);
+        var response = updateGateway.update(id, rep);
         var responseDto = typeEntityMapper.typeEntityResponse(response);
 
         log.info("Type user with Name Type: {} updated successfully", rep.getNameType());
