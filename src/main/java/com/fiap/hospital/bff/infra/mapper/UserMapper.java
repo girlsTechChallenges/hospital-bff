@@ -29,6 +29,7 @@ public class UserMapper {
     public User toUserDomain(UserDto userRequestDto) {
 
         return new User(
+                null,
                 userRequestDto.name(),
                 userRequestDto.email(),
                 userRequestDto.login(),
@@ -65,6 +66,7 @@ public class UserMapper {
     public User toUserDomain(UserEntity userEntity) {
 
         return new User(
+                userEntity.getId(),
                 userEntity.getName(),
                 userEntity.getEmail(),
                 userEntity.getLogin(),
@@ -76,7 +78,7 @@ public class UserMapper {
 
      public UserResponseDto toUserResponseDto(User user) {
 
-         return new UserResponseDto(user.getName(), user.getLogin(), user.getEmail(), user.getType().getNameType());
+         return new UserResponseDto(user.getId(), user.getName(), user.getLogin(), user.getEmail(), user.getType().getNameType());
      }
 
      public UserResponseDto getUserByIdToUserResponseDto(Optional<User> optionalUser) {
@@ -84,7 +86,7 @@ public class UserMapper {
          User user = optionalUser.orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
 
        
-         return new UserResponseDto(user.getName(), user.getLogin(), user.getEmail(), user.getType().getNameType());
+         return new UserResponseDto(user.getId(), user.getName(), user.getLogin(), user.getEmail(), user.getType().getNameType());
      }
 
 
