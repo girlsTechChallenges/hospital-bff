@@ -37,7 +37,10 @@ public class UpdateGatewayImpl implements UpdateGateway {
     @Override
     public Optional<User> update(Long idUser, User user) {
         UserEntity findUser = userRepository.findById(idUser)
-                .orElseThrow(() -> new UserNotFoundException(idUser));
+                .orElseThrow(() -> {
+                    log.warn("User with Id {} not found for update", idUser);
+                    return new UserNotFoundException(idUser);
+                });
 
         if (user != null) {
             findUser.setName(user.getName());
