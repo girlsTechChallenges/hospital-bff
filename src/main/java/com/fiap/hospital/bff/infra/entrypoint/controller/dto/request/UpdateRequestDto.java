@@ -1,6 +1,7 @@
 package com.fiap.hospital.bff.infra.entrypoint.controller.dto.request;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
+import com.fiap.hospital.bff.core.domain.model.user.TypeEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

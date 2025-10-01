@@ -66,10 +66,26 @@ public class TypeController implements TypeUserControllerDocs {
         return ResponseEntity.accepted().body(responseDto);
     }
 
-    @Override
-    public ResponseEntity<TypeEntityResponse> getById(Long id) {
-        log.info("GET TYPE BY ID REQUEST {} ", id);
-        Optional<Type> type = getGateway.getTypeById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(typeEntityMapper.getTypeByIdToTypeResponseDto(type));
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable @NotNull Long id) {
+        log.info("Received request to delete type user with ID: {}", id);
+
+        deleteGateway.deleteById(id);
+        log.info("Type user with ID: {} deleted successfully", id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TypeEntityResponse> getById(@PathVariable @NotNull Long id) {
+        log.info("Received request to get type user by ID: {}", id);
+
+        var typeUser = getGateway.getTypeById(id);
+        if (typeUser.isPresent()) {
+            log.info("Type user found: {}", typeUser.get());
+            return ResponseEntity.ok(typeEntityMapper.typeEntityResponse(typeUser.get()));
+        }
+        log.warn("Type user with ID: {} not found", id);
+        return ResponseEntity.notFound().build();
     }
 }
