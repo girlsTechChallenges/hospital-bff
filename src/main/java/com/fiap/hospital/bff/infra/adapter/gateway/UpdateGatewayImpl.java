@@ -10,6 +10,7 @@ import com.fiap.hospital.bff.infra.mapper.UserMapper;
 import com.fiap.hospital.bff.infra.persistence.user.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.fiap.hospital.bff.core.domain.model.user.User;
 import com.fiap.hospital.bff.core.outputport.UpdateGateway;
@@ -46,7 +47,9 @@ public class UpdateGatewayImpl implements UpdateGateway {
             findUser.setName(user.getName());
             findUser.setEmail(user.getEmail());
             findUser.setPassword(user.getPassword());
-            TypeEntity typo = findOrCreateType(user.getType().getNameType(), user.getType().getRoles());
+            TypeEntity typo = findOrCreateType(
+                    normalizeTypeName(user.getType().getNameType()),
+                    user.getType().getRoles());
             findUser.setTypes(typo);
         }
         log.info("UserEntity {} found for update", findUser);
@@ -107,13 +110,14 @@ public class UpdateGatewayImpl implements UpdateGateway {
     }
 
     private TypeEntity createNewTypeIfNotExists(String formattedType, List<String> roles) {
-        boolean typeAlreadyExists = typeEntityRepositoryAdapter.findAll().stream()
-                .anyMatch(type -> type.getNameType().trim().equalsIgnoreCase(formattedType));
 
-        if (typeAlreadyExists) {
-            throw new IllegalArgumentException("User type already exists with a similar name.");
+        try {
+            return typeEntityRepositoryAdapter.save(new TypeEntity(null, formattedType, roles));
+        } catch (DataIntegrityViolationException e) {
+            return typeEntityRepositoryAdapter.findByNameType(formattedType)
+                    .orElseThrow(() -> new IllegalArgumentException("User type already exists."));
         }
 
-        return typeEntityRepositoryAdapter.save(new TypeEntity(null, formattedType.trim().toUpperCase(), roles));
+
     }
 }
