@@ -60,15 +60,25 @@ public class UpdateGatewayImpl implements UpdateGateway {
     @Override
     public Optional<Type>  update(Long IdType, Type type) {
         String normalizedType = normalizeTypeName(type.getNameType());
-        TypeEntity existingType = typeEntityRepositoryAdapter.findById(IdType)
+        TypeEntity existingIdType = typeEntityRepositoryAdapter.findById(IdType)
                 .orElseThrow(() -> {
-                    log.warn("TypeUser with nameType {} not found for update", type.getNameType());
+                    log.warn("TypeUser with id {} not found for update", IdType);
                     return new UserNotFoundException("TypeUser not found with id: " + type.getNameType());
                 });
 
-        existingType.setNameType(normalizedType);
-        existingType.setRoles(type.getRoles());
-        TypeEntity updatedEntity = typeEntityRepositoryAdapter.save(existingType);
+        // Verifica se o nameType está sendo alterado
+        if (!existingIdType.getNameType().equalsIgnoreCase(normalizedType)) {
+            // Verifica se já existe outro registro com o mesmo nameType
+            Optional<TypeEntity> existingNameType = typeEntityRepositoryAdapter.findByNameType(normalizedType);
+            if (existingNameType.isPresent()) {
+                log.warn("TypeUser with nameType '{}' already exists", normalizedType);
+                throw new UserNotFoundException("TypeUser with nameType '" + normalizedType + "' already exists.");
+            }
+        }
+
+        existingIdType.setNameType(normalizedType);
+        existingIdType.setRoles(type.getRoles());
+        TypeEntity updatedEntity = typeEntityRepositoryAdapter.save(existingIdType);
         Type updatedTypeUser = typeMapper.toTypeEntityDomain(updatedEntity);
 
         log.info("TypeUser updated successfully: {}", updatedTypeUser);
