@@ -49,7 +49,7 @@ public class UpdateGatewayImpl implements UpdateGateway {
             TypeEntity typo = findOrCreateType(user.getType().getNameType(), user.getType().getRoles());
             findUser.setTypes(typo);
         }
-
+        log.info("UserEntity {} found for update", findUser);
         UserEntity actualization = userRepository.save(findUser);
         return Optional.ofNullable(mapper.toUserDomain(actualization));
     }
