@@ -70,7 +70,7 @@ public class TypeController implements TypeUserControllerDocs {
     public ResponseEntity<Void> delete(@PathVariable @NotNull Long id) {
         log.info("Received request to delete type user with ID: {}", id);
 
-        deleteGateway.deleteById(id);
+        deleteGateway.deleteTypeById(id);
         log.info("Type user with ID: {} deleted successfully", id);
 
         return ResponseEntity.noContent().build();

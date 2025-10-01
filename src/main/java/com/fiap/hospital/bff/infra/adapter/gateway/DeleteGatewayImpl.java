@@ -4,7 +4,10 @@ import java.util.Optional;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
+import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
+import com.fiap.hospital.bff.infra.persistence.user.TypeEntity;
+import com.fiap.hospital.bff.infra.persistence.user.TypeRepository;
 import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 import com.fiap.hospital.bff.infra.persistence.user.UserRepository;
 import org.slf4j.Logger;
@@ -21,11 +24,15 @@ public class DeleteGatewayImpl implements DeleteGateway {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final UserMapper mapper;
+    private final TypeEntityMapper typeMapper;
+    private final TypeRepository typeRepository;
 
-    public DeleteGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, UserMapper mapper) {
+    public DeleteGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, UserMapper mapper, TypeEntityMapper typeMapper, TypeRepository typeRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.mapper = mapper;
+        this.typeMapper = typeMapper;
+        this.typeRepository = typeRepository;
     }
 
     @Override
@@ -36,5 +43,15 @@ public class DeleteGatewayImpl implements DeleteGateway {
         Optional<UserEntity> user = userRepository.findById(idUser);
         userRepository.deleteById(idUser);
         return user.map(mapper::toUserDomain);
+    }
+
+    @Override
+    public Optional<Type> deleteTypeById(Long idType) {
+        TypeEntity findType = typeRepository.findById(idType)
+                .orElseThrow(() -> new UserNotFoundException(idType));
+
+        Optional<TypeEntity> type = typeRepository.findById(idType);
+        typeRepository.deleteById(idType);
+        return type.map(typeMapper::toTypeDomain);
     }
 }

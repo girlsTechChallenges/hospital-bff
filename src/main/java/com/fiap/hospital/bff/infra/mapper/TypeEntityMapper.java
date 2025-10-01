@@ -17,8 +17,8 @@ public class TypeEntityMapper {
         return new Type(null, typeRequestDto.nameType(), typeRequestDto.roles());
     }
 
-    public Type toTypeDomain(TypeEntityRequestDto typeEntityRequestDto) {
-        return new Type(null, typeEntityRequestDto.nameType(), typeEntityRequestDto.roles());
+    public Type toTypeDomain(TypeEntity typeEntity) {
+        return new Type(null, typeEntity.getNameType(), typeEntity.getRoles());
     }
 
     public TypeEntity toTypeEntity(Type type) {

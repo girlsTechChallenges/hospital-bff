@@ -10,4 +10,6 @@ public interface DeleteGateway {
 
     //User
        Optional<User> deleteById(Long idUser);
+
+       Optional<Type> deleteTypeById(Long idType);
 }
