@@ -26,7 +26,6 @@ public record UserDto(
         @Size(min = 8, max = 100)
         String password,
 
-        LocalDate changeDate,
 
         @NotNull
         @NotBlank

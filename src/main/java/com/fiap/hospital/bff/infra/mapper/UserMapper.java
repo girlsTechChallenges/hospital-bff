@@ -11,6 +11,8 @@ import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserAuthDto
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserDto;
 import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +36,7 @@ public class UserMapper {
                 userRequestDto.email(),
                 userRequestDto.login(),
                 userRequestDto.password(),
-                userRequestDto.changeDate(),
+                new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                 userRequestDto.type());
     }
 
