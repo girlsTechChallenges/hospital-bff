@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,5 +15,5 @@ public class Token {
 
     private String accessToken;
     private Long expiresIn;
-    
+    private List<String> scopes;
 }

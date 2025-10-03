@@ -76,17 +76,20 @@ public class GetGatewayImpl implements GetGateway {
 
         var now = Instant.now();
         var expiresIn = 300L;
-        var scope = user.map(UserEntity::getTypes);
+        var type = user.get().getTypes().getNameType();
+        var scopes = typeEntityRepositoryAdapter.findByNameType(type).stream()
+                .flatMap(t -> t.getRoles().stream())
+                .collect(Collectors.toList());
 
         var claims = JwtClaimsSet.builder()
                 .issuer("BackendHospitalBff")
                 .subject(email)
                 .issuedAt(now)
-                .claim("scope", scope)
+                .claim("scopes", scopes)
                 .expiresAt(now.plusSeconds(expiresIn)).build();
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        return new Token(jwtValue, expiresIn);
+        return new Token(jwtValue, expiresIn, scopes);
     }
 
      private boolean isLoginCorrect(String email, String password, PasswordEncoder passwordEncoder) {
@@ -103,6 +106,14 @@ public class GetGatewayImpl implements GetGateway {
     public Optional<Type> getTypeById(Long idType) {
         var findType = typeEntityRepositoryAdapter.findById(idType)
                 .orElseThrow(() -> new TypeNotFoundException(idType));
+
+        return Optional.ofNullable(typeMapper.toTypeEntityDomain(findType));
+    }
+
+    @Override
+    public Optional<Type> getTypeByName(String nameType) {
+        var findType = typeEntityRepositoryAdapter.findByNameType(nameType)
+                .orElseThrow(() -> new TypeNotFoundException(nameType));
 
         return Optional.ofNullable(typeMapper.toTypeEntityDomain(findType));
     }

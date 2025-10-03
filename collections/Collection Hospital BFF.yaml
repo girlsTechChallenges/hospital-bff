@@ -1,0 +1,1182 @@
+type: collection.insomnia.rest/5.0
+name: Scratch Pad
+meta:
+  id: wrk_scratchpad
+  created: 1755887321493
+  modified: 1755887321493
+  description: ""
+collection:
+  - name: Hospital BFF
+    meta:
+      id: fld_e71a5418539244a996380c9fe5ee926f
+      created: 1755887444268
+      modified: 1759513108550
+      sortKey: -1755887443003
+      description: Collection completa para testar todos os endpoints da API Fortaleza
+        de Sabor, incluindo gestão de usuários, restaurantes e autenticação.
+    children:
+      - name: 👤 User Management
+        meta:
+          id: fld_5eb99479528f4e86830883522374128b
+          created: 1755887444270
+          modified: 1759512687023
+          sortKey: -1755887443002
+          description: Endpoints para gestão de usuários (CRUD completo)
+        children:
+          - url: "{{baseUrl}}/users"
+            name: Create User (NURSE)
+            meta:
+              id: req_b1a847eb26ff48a798261d9b37b9f0af
+              created: 1755887444271
+              modified: 1759510459696
+              isPrivate: false
+              description: Criar um novo usuário do tipo CLIENTE
+              sortKey: -1755887443001
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "name": "Maria Santos",
+                  "email": "maria.santos@example.com",
+                  "login": "mariaSantos",
+                  "password": "senhaForte123",
+                  "changeDate": "2025-09-20",
+                  "type": {
+                    "nameType": "NURSE"
+                  }
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: >-
+                if (insomnia.response.code === 201) {
+                    var jsonData = insomnia.response.json();
+                    insomnia.collectionVariables.set('userId', jsonData.id);
+                    insomnia.test('User created successfully', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(201);
+                    });
+                } else {
+                    insomnia.test('Failed to create user', function () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([400, 409]);
+                    });
+                }
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/users"
+            name: Create User (DOCTOR)
+            meta:
+              id: req_f132698435f14dbba8fe365c9f3bcc07
+              created: 1755887444273
+              modified: 1759510415277
+              isPrivate: false
+              description: Criar um novo usuário do tipo DONO (proprietário de restaurante)
+              sortKey: -1755887443000
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "name": "João da Silva",
+                  "email": "joao.silva@example.com",
+                  "login": "joaosilva",
+                  "password": "senhaForte123",
+                  "changeDate": "2025-09-30",
+                  "type": {
+                    "nameType": "DOCTOR"
+                  }
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: >-
+                if (insomnia.response.code === 201) {
+                    insomnia.test('Restaurant owner created successfully', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(201);
+                    });
+                } else {
+                    insomnia.test('Failed to create restaurant owner', function () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([400, 409]);
+                    });
+                }
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/users"
+            name: Get All Users
+            meta:
+              id: req_ba26b5962b7c44c095a280c8928348fb
+              created: 1755887444274
+              modified: 1759510313757
+              isPrivate: false
+              description: Listar todos os usuários cadastrados
+              sortKey: -1755887442999
+            method: GET
+            headers:
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: |-
+                insomnia.test('Status code is 200', function () {
+                    insomnia.response.to.have.status(200);
+                });
+
+                insomnia.test('Response is an array', function () {
+                    var jsonData = insomnia.response.json();
+                    insomnia.expect(jsonData).to.be.an('array');
+                });
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/users/2"
+            name: Get User by ID
+            meta:
+              id: req_766758db4a1c4d9c9a9b1d7316b2ed40
+              created: 1755887444275
+              modified: 1759510317455
+              isPrivate: false
+              description: Buscar usuário específico por ID
+              sortKey: -1755887442998
+            method: GET
+            headers:
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: |-
+                if (insomnia.response.code === 200) {
+                    insomnia.test('User found successfully', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(200);
+                        var jsonData = insomnia.response.json();
+                        insomnia.expect(jsonData).to.have.property('id');
+                        insomnia.expect(jsonData).to.have.property('nome');
+                        insomnia.expect(jsonData).to.have.property('email');
+                    });
+                } else {
+                    insomnia.test('User not found', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(404);
+                    });
+                }
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/users/4"
+            name: Update User
+            meta:
+              id: req_39d38adc6b5b43269e3621853e14bcab
+              created: 1755887444276
+              modified: 1759510554022
+              isPrivate: false
+              description: Atualizar informações de um usuário existente
+              sortKey: -1755887442997
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "name": "João da Silva",
+                  "email": "joao.silva@example.com",
+                  "login": "joaosilva",
+                  "password": "senhaForte123",
+                  "changeDate": "2025-09-30",
+                  "type": {
+                    "nameType": "DOCTOR"
+                  }
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: >-
+                if (insomnia.response.code === 200) {
+                    insomnia.test('User updated successfully', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(200);
+                    });
+                } else {
+                    insomnia.test('Failed to update user', function () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([400, 404]);
+                    });
+                }
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/users/3"
+            name: Delete User
+            meta:
+              id: req_250d71b3554b498685ec6e692c95d432
+              created: 1755887444277
+              modified: 1759510393468
+              isPrivate: false
+              description: Remover um usuário do sistema
+              sortKey: -1755887442996
+            method: DELETE
+            headers:
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: >-
+                if (insomnia.response.code === 204) {
+                    insomnia.test('User deleted successfully', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(204);
+                    });
+                } else {
+                    insomnia.test('Failed to delete user', function () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([404, 400]);
+                    });
+                }
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/users"
+            name: Create User (PATIENT)
+            meta:
+              id: req_881a053f26b84c1faa5485b1e674daee
+              created: 1759510293624
+              modified: 1759510522398
+              isPrivate: false
+              description: Criar um novo usuário do tipo CLIENTE
+              sortKey: -1755887443101
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "name": "José Rocha",
+                  "email": "jose.racho@example.com",
+                  "login": "joaosilva",
+                  "password": "senhaForte123",
+                  "changeDate": "2025-09-10",
+                  "type": {
+                    "nameType": "PATIENT"
+                  }
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: >-
+                if (insomnia.response.code === 201) {
+                    var jsonData = insomnia.response.json();
+                    insomnia.collectionVariables.set('userId', jsonData.id);
+                    insomnia.test('User created successfully', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(201);
+                    });
+                } else {
+                    insomnia.test('Failed to create user', function () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([400, 409]);
+                    });
+                }
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 🔐 Authentication
+        meta:
+          id: fld_ebea7d3eef9c41a99ba6591672856d52
+          created: 1755887444282
+          modified: 1759512697036
+          sortKey: -1755887442991
+          description: Endpoints para autenticação e gestão de senhas
+        children:
+          - url: "{{baseUrl}}/auth/login"
+            name: 1. Login User
+            meta:
+              id: req_b9702f93c91743da820d05452143d4f1
+              created: 1755887444283
+              modified: 1759510610886
+              isPrivate: false
+              description: Realizar login e obter token de acesso
+              sortKey: -1755887442990
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email": "maria.santos@example.com",
+                  "password": "novaSenhaSegura456"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: >-
+                if (insomnia.response.code === 200) {
+                    var jsonData = insomnia.response.json();
+                    if (jsonData.accessToken) {
+                        insomnia.collectionVariables.set('authToken', jsonData.accessToken);
+                    }
+                    insomnia.test('Login successful', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(200);
+                        insomnia.expect(jsonData).to.have.property('accessToken');
+                    });
+                } else {
+                    insomnia.test('Login failed', function () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([401, 400]);
+                    });
+                }
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/auth/password"
+            name: 3. Update Password
+            meta:
+              id: req_dc710eb4bc3c4f5c8a13ea5a8a341a77
+              created: 1755887444285
+              modified: 1759510601065
+              isPrivate: false
+              description: Alterar senha de um usuário
+              sortKey: -1755887442988
+            method: PATCH
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email": "maria.santos@example.com",
+                  "password": "novaSenhaSegura456"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+            scripts:
+              afterResponse: >-
+                if (insomnia.response.code === 204) {
+                    insomnia.test('Password updated successfully', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(204);
+                    });
+                } else {
+                    insomnia.test('Failed to update password', function () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([400, 404]);
+                    });
+                }
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 🧪 Test Scenarios
+        meta:
+          id: fld_a3da9ccadc2049d290021e67ec574fb0
+          created: 1755887444294
+          modified: 1759513063688
+          sortKey: -1755887442981
+          description: Cenários de teste especiais
+        children:
+          - name: Error Tests
+            meta:
+              id: fld_91613af018394f8e9924fd2615979122
+              created: 1755887444295
+              modified: 1759512769540
+              sortKey: -1755887442980
+              description: Testes de cenários de erro
+            children:
+              - url: "{{baseUrl}}/users"
+                name: Create User - Invalid Email
+                meta:
+                  id: req_8edf52ee0d9b44e9aa1280bf3b04af6f
+                  created: 1755887444297
+                  modified: 1759512767994
+                  isPrivate: false
+                  description: Testar criação de usuário com email inválido
+                  sortKey: -1755887442979
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "name": "Teste Email Inválido",
+                      "email": "email-invalido",
+                      "login": "teste",
+                      "password": "senha123",
+                      "changeDate": "2025-09-20",
+                      "type": {
+                        "nameType": "NURSE"
+                      }
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Invalid email should return 400', function ()
+                    {
+                        insomnia.expect(insomnia.response.code).to.eql(400);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{baseUrl}}/auth/login"
+                name: Login - Invalid Credentials
+                meta:
+                  id: req_04158491a00b4fe5a610ab561a5e56a6
+                  created: 1755887444299
+                  modified: 1755887444299
+                  isPrivate: false
+                  description: Testar login com credenciais inválidas
+                  sortKey: -1755887442977
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "email": "usuario.inexistente@email.com",
+                      "password": "senhaErrada"
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Invalid credentials should return 401',
+                    function () {
+                        insomnia.expect(insomnia.response.code).to.eql(401);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+          - name: Validation Tests
+            meta:
+              id: fld_6be66d230ece46ff9e0d7424209e2793
+              created: 1755887444300
+              modified: 1759512863895
+              sortKey: -1755887442976
+              description: Testes de validação de campos específicos
+            children:
+              - url: "{{baseUrl}}/users"
+                name: Create User - Short Password
+                meta:
+                  id: req_c64b2e4e7de84460b7a4e6e8bbd6f4db
+                  created: 1755887444301
+                  modified: 1759512808254
+                  isPrivate: false
+                  description: Testar criação de usuário com senha muito curta
+                  sortKey: -1755887442975
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "name": "Usuario Teste",
+                      "email": "senha.curta@email.com",
+                      "login": "senhacurta",
+                      "password": "123",
+                      "changeDate": "2025-09-10",
+                      "type": {
+                        "nameType": "PATIENT"
+                      }
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Short password should return 400', function
+                    () {
+                        insomnia.expect(insomnia.response.code).to.eql(400);
+                    });
+
+
+                    insomnia.test('Response should contain validation error',
+                    function () {
+                        var jsonData = insomnia.response.json();
+                        insomnia.expect(jsonData).to.have.property('errors');
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{baseUrl}}/users"
+                name: Create User - Short Login
+                meta:
+                  id: req_bd5711215416428c8b61f13da8ed0192
+                  created: 1755887444305
+                  modified: 1759512861727
+                  isPrivate: false
+                  description: Testar criação de usuário com login muito curto
+                  sortKey: -1755887442972
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "name": "Usuario Login Curto",
+                      "email": "login.curto@email.com",
+                      "login": "ab",
+                      "password": "senhaForte123",
+                      "changeDate": "2025-09-10",
+                      "type": {
+                        "nameType": "PATIENT"
+                      }
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: |-
+                    insomnia.test('Short login should return 400', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(400);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+          - name: Business Logic Tests
+            meta:
+              id: fld_9315bcacb2984c2da0200a149ec0dc7a
+              created: 1755887444309
+              modified: 1759512911559
+              sortKey: -1755887442969
+              description: Testes de lógica de negócio e recursos inexistentes
+            children:
+              - url: "{{baseUrl}}/users"
+                name: Create User - Duplicate Email
+                meta:
+                  id: req_766181c9fe5646888ba2226a5b0daaa7
+                  created: 1755887444310
+                  modified: 1759512887252
+                  isPrivate: false
+                  description: Testar criação de usuário com email já existente
+                  sortKey: -1755887442968
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                       "name": "José Rocha",
+                      "email": "jose.racho@example.com",
+                      "login": "joaosilva",
+                      "password": "senhaForte123",
+                      "changeDate": "2025-09-10",
+                      "type": {
+                        "nameType": "PATIENT"
+                      }
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Duplicate email should return 409', function
+                    () {
+                        insomnia.expect(insomnia.response.code).to.eql(409);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{baseUrl}}/users/99999"
+                name: Update Non-existent User
+                meta:
+                  id: req_847e8afb28644b9584e930bef68398d7
+                  created: 1755887444312
+                  modified: 1759512906029
+                  isPrivate: false
+                  description: Testar atualização de usuário inexistente
+                  sortKey: -1755887442967
+                method: PUT
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {  
+                    	"name": "José Rocha",
+                      "email": "jose.racho@example.com",
+                      "login": "joaosilva",
+                      "password": "senhaForte123",
+                      "changeDate": "2025-09-10",
+                      "type": {
+                        "nameType": "PATIENT"
+                      }
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Update non-existent user should return 404',
+                    function () {
+                        insomnia.expect(insomnia.response.code).to.eql(404);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{baseUrl}}/users/99999"
+                name: Delete Non-existent User
+                meta:
+                  id: req_ee64c1f9b33f40f8958a2784f6c6192d
+                  created: 1755887444313
+                  modified: 1755887444313
+                  isPrivate: false
+                  description: Testar exclusão de usuário inexistente
+                  sortKey: -1755887442966
+                method: DELETE
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Delete non-existent user should return 404',
+                    function () {
+                        insomnia.expect(insomnia.response.code).to.eql(404);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{baseUrl}}/users/99999"
+                name: Get Non-existent User
+                meta:
+                  id: req_bac1cec85e024e139c49af83e833dec3
+                  created: 1755887444315
+                  modified: 1755887444315
+                  isPrivate: false
+                  description: Testar busca de usuário inexistente
+                  sortKey: -1755887442965
+                method: GET
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Get non-existent user should return 404',
+                    function () {
+                        insomnia.expect(insomnia.response.code).to.eql(404);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+          - name: Edge Cases
+            meta:
+              id: fld_eb3e26ee3e2042a3b57a29ba9674b3f2
+              created: 1755887444317
+              modified: 1759512973327
+              sortKey: -1755887442963
+              description: Testes de casos extremos
+            children:
+              - url: "{{baseUrl}}/users"
+                name: Create User - Minimal Data
+                meta:
+                  id: req_36cd503cdcef47d3b8e7813e188ef40d
+                  created: 1755887444319
+                  modified: 1759512971623
+                  isPrivate: false
+                  description: Testar criação de usuário com dados mínimos
+                  sortKey: -1755887442961
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "name": "A",
+                      "email": "a@b.co",
+                      "login": "a",
+                      "password": "123",
+                      "type": {
+                        "nameType": "NURSE"
+                      }
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Minimal data should be handled', function ()
+                    {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([201, 400]);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+          - name: Malformed Requests
+            meta:
+              id: fld_f7501e738bd0416d91864027dd5e1cdd
+              created: 1755887444320
+              modified: 1759513025739
+              sortKey: -1755887442960
+              description: Testes de requisições mal formadas
+            children:
+              - url: "{{baseUrl}}/users"
+                name: Create User - Missing Required Fields
+                meta:
+                  id: req_249aef44fb7544e68304f28012f67114
+                  created: 1755887444321
+                  modified: 1759512981738
+                  isPrivate: false
+                  description: Testar criação de usuário com campos obrigatórios ausentes
+                  sortKey: -1755887442959
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "name": "Usuario Incompleto",
+                      "email": "incompleto@email.com"
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Missing required fields should return 400',
+                    function () {
+                        insomnia.expect(insomnia.response.code).to.eql(400);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{baseUrl}}/auth/login"
+                name: Login - Empty Body
+                meta:
+                  id: req_c28e18a7b05d42f39ecbebf4ad9dd408
+                  created: 1755887444326
+                  modified: 1755887444326
+                  isPrivate: false
+                  description: Testar login com corpo vazio
+                  sortKey: -1755887442956
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: "{}"
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: |-
+                    insomnia.test('Empty body should return 400', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(400);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{baseUrl}}/auth/password"
+                name: Update Password - Invalid Email
+                meta:
+                  id: req_64e7c1fff71e46d7b4b51adb551ac24f
+                  created: 1755887444327
+                  modified: 1755887444327
+                  isPrivate: false
+                  description: Testar alteração de senha com email inexistente
+                  sortKey: -1755887442955
+                method: PATCH
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "email": "usuario.inexistente@email.com",
+                      "password": "novaSenhaSegura456"
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('Invalid email for password update should
+                    return 404', function () {
+                        insomnia.expect(insomnia.response.code).to.eql(404);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+          - name: Security Tests
+            meta:
+              id: fld_09bbe5c3fee04198a22c2916f9186aa8
+              created: 1755887444328
+              modified: 1759513063688
+              sortKey: -1755887442954
+              description: Testes de segurança básicos
+            children:
+              - url: "{{baseUrl}}/auth/login"
+                name: SQL Injection Test - Login
+                meta:
+                  id: req_9bb66c39b0ed44a1b6fd7393b7efe73a
+                  created: 1755887444330
+                  modified: 1755887444330
+                  isPrivate: false
+                  description: Testar prevenção de SQL injection
+                  sortKey: -1755887442952
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "email": "admin@test.com'; DROP TABLE users; --",
+                      "password": "password"
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('SQL injection should be prevented', function
+                    () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([400, 401]);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+              - url: "{{baseUrl}}/users"
+                name: XSS Test - User Creation
+                meta:
+                  id: req_e479418f0f1d4ddd8d5f8b57221d6db2
+                  created: 1755887444332
+                  modified: 1759513062238
+                  isPrivate: false
+                  description: Testar prevenção de XSS em campos de entrada
+                  sortKey: -1755887442951
+                method: POST
+                body:
+                  mimeType: application/json
+                  text: |-
+                    {
+                      "name": "<script>alert('XSS')</script>",
+                      "email": "xss.test@email.com",
+                      "login": "xsstest",
+                      "password": "senhaForte123",
+                      "changeDate": "2025-09-10",
+                      "type": {
+                        "nameType": "PATIENT"
+                      }
+                    }
+                headers:
+                  - name: Content-Type
+                    value: application/json
+                scripts:
+                  afterResponse: >-
+                    insomnia.test('XSS should be prevented', function () {
+                        insomnia.expect(insomnia.response.code).to.be.oneOf([400, 201]);
+                    });
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+      - name: 👤 Tipo
+        meta:
+          id: fld_d9a8866c6914467c99658a24c0eca46b
+          created: 1758844722994
+          modified: 1759509266865
+          sortKey: -1758844722994
+          description: ""
+        children:
+          - url: "{{baseUrl}}/type-users"
+            name: Get All Tipos
+            meta:
+              id: req_94dec094c1dd4cd8ba348543321565f1
+              created: 1758844727564
+              modified: 1759509224298
+              isPrivate: false
+              description: ""
+              sortKey: -1759509177715
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/type-users"
+            name: Create Tipo (DOCTOR)
+            meta:
+              id: req_16cc4286b0e14ff1a484324d996e1a17
+              created: 1758844804491
+              modified: 1759510133100
+              isPrivate: false
+              description: ""
+              sortKey: -1759509177765
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "nameType": "DOCTOR",
+                    "roles": ["history_read", "history_write"]
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/type-users/2"
+            name: Update
+            meta:
+              id: req_fbd9f1c04be64dfb865958fb809b5fc2
+              created: 1759276385498
+              modified: 1759510259174
+              isPrivate: false
+              description: ""
+              sortKey: -1759509177677.5
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "nameType": "DOCTOR",
+                    "roles": ["history_read", "history_write"]
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/type-users/2"
+            name: GetByID
+            meta:
+              id: req_6bfe9ecaf9124d0a9246f990422a881e
+              created: 1759509147521
+              modified: 1759511218453
+              isPrivate: false
+              description: ""
+              sortKey: -1759509177690
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/type-users/4"
+            name: Delete
+            meta:
+              id: req_d000ec153bd943b396ce06b600b8e048
+              created: 1759509177665
+              modified: 1759510174761
+              isPrivate: false
+              description: ""
+              sortKey: -1759509177665
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/type-users"
+            name: Create Tipo (NURSE)
+            meta:
+              id: req_f487e0b9a5014c888f79180eead4c5e7
+              created: 1759509523995
+              modified: 1759510138602
+              isPrivate: false
+              description: ""
+              sortKey: -1759509177865
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "nameType": "NURSE",
+                    "roles": ["consultations_write", "history_read"]
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/type-users"
+            name: Create Tipo (PATIENT)
+            meta:
+              id: req_793fddf7ed7347b38f13afaacc6a10f9
+              created: 1759509888249
+              modified: 1759510518148
+              isPrivate: false
+              description: ""
+              sortKey: -1759509177965
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "nameType": "PATIENT",
+                    "roles": ["consultations_read"]
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+    authentication:
+      type: bearer
+      disabled: false
+      token: "{{authToken}}"
+      prefix: ""
+    environment:
+      baseUrl: http://localhost:8080
+      authToken: ""
+      userId: ""
+      restaurantId: ""
+      menuId: ""
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1755887340032
+    modified: 1759513063681
+environments:
+  name: Base Environment
+  meta:
+    id: env_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1755887339838
+    modified: 1759513063686
+    isPrivate: false
+  data:
+    authToken: eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJCYWNrZW5kRm9ydGFsZXphU2Fib3IiLCJzdWIiOiJtYXJpYS5zYW50b3NAZXhhbXBsZS5jb20iLCJzY29wZXMiOlsiY29uc3VsdGF0aW9uc193cml0ZSIsImhpc3RvcnlfcmVhZCJdLCJleHAiOjE3NTk1MTI5OTYsImlhdCI6MTc1OTUxMjY5Nn0.GWybqgrpswYLlzAHmzcSLbv3Ipw5MEnPTFgLAqGd6Bh9W4RS_t3GQcoS94w9unxPLemT9oVuiQI8T_BSNL3As5-N33lojLRCFKDEyQl5zfG1ubczYXg7sxmkx5W8hRjBju3q2m08lUJnQuGf94ACDNRnWHmO08wmCS0SMDHnu9qtAOi3qWAn8pMRW7x6lUgzsSVGWZwVfPOF1E3ZGYKeHWBcKTEpFJBNa0njbQCA34gvACh8nJVBrP7lwfvD1r8z_uDR44fT9Gw9DmC-qHHITYLxcvA0ar-7vT3EPqsMESa3-yv9Ph3HP-tKCIhYnRXLKHoKvCOEA5iih67RKV50HA
+    userId: 6

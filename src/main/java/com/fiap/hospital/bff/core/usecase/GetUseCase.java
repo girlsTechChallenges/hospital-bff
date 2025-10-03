@@ -1,6 +1,7 @@
 package com.fiap.hospital.bff.core.usecase;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,19 +38,20 @@ public class GetUseCase implements ConsultQueryUseCase {
 
         var now = Instant.now();
         var expiresIn = 300L;
-        var scope = user.stream()
-                .map(u -> u.getType().getNameType())
-                .collect(Collectors.joining(" "));
+        var type = user.get().getType().getNameType();
+        var scopes = getGateway.getTypeByName(type).stream()
+                .flatMap(t -> t.getRoles().stream())
+                .collect(Collectors.toList());
 
         var claims = JwtClaimsSet.builder()
                 .issuer("BackendFortalezaSabor")
                 .subject(email)
                 .issuedAt(now)
-                .claim("scope", scope)
+                .claim("scopes", scopes)
                 .expiresAt(now.plusSeconds(expiresIn)).build();
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        return new Token(jwtValue, expiresIn);
+        return new Token(jwtValue, expiresIn, (List<String>) scopes);
     }
 
     private boolean isLoginCorrect(String email, String password, PasswordEncoder passwordEncoder) {

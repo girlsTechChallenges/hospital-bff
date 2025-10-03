@@ -17,5 +17,6 @@ public interface GetGateway {
     Token validateLogin(String email, String password);
 
     List<Type> getAllTypes();
-    Optional<Type> getTypeById(Long idUser);
+    Optional<Type> getTypeById(Long idType);
+    Optional<Type> getTypeByName(String nameType);
 }

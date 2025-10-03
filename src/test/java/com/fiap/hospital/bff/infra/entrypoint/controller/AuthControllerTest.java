@@ -12,6 +12,8 @@ import org.mockito.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,8 +43,8 @@ class AuthControllerTest {
         String password = "password123";
 
         UserCredentialsDto loginRequest = new UserCredentialsDto(email, password);
-        Token token = new Token("jwt-token", 300L);
-        UserAuthDto tokenResponseDto = new UserAuthDto("jwt-token", 300L);
+        Token token = new Token("jwt-token", 300L, List.of("123"));
+        UserAuthDto tokenResponseDto = new UserAuthDto("jwt-token", 300L, List.of("123"));
 
         when(consultQueryUseCase.validateLogin(email, password)).thenReturn(token);
         when(userMapper.toTokenResponseDto(token)).thenReturn(tokenResponseDto);

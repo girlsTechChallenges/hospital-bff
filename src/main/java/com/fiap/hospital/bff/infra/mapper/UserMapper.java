@@ -95,7 +95,7 @@ public class UserMapper {
 
 
     public UserAuthDto toTokenResponseDto(Token token) {
-        return new UserAuthDto(token.getAccessToken(), token.getExpiresIn());
+        return new UserAuthDto(token.getAccessToken(), token.getExpiresIn(), token.getScopes());
     }
 
 }

@@ -174,7 +174,7 @@ class UserMapperTest {
 
     @Test
     void toTokenResponseDto_ShouldMapCorrectly() {
-        Token token = new Token("token123", 3600L);
+        Token token = new Token("token123", 3600L, List.of("123"));
 
         UserAuthDto authDto = userMapper.toTokenResponseDto(token);
 

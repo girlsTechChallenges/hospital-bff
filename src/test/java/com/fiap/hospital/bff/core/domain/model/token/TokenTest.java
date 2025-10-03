@@ -1,6 +1,9 @@
 package com.fiap.hospital.bff.core.domain.model.token;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TokenTest {
@@ -17,7 +20,7 @@ class TokenTest {
 
     @Test
     void testAllArgsConstructor() {
-        Token token = new Token("xyz789", 7200L);
+        Token token = new Token("xyz789", 7200L, List.of("123"));
 
         assertEquals("xyz789", token.getAccessToken());
         assertEquals(7200L, token.getExpiresIn());
