@@ -44,6 +44,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiErrorMessage, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleException(Exception ex) {
 
@@ -70,7 +71,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserAlreadyRegisteredException.class)
-    public ResponseEntity<Map<String, String>> eserAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
+    public ResponseEntity<Map<String, String>> userAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", "Invalid email or password");
         errorResponse.put("message", ex.getMessage());
@@ -93,6 +94,15 @@ public class GlobalExceptionHandler {
         errorResponse.put("error", "Mismatch Exception");
         errorResponse.put("message", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
+    }
+
+
+    @ExceptionHandler(TypeNotFoundException.class)
+    public ResponseEntity<ApiErrorMessage> typeNotFoundException(TypeNotFoundException exception, WebRequest request) {
+        Map<String, List<String>> errors = new HashMap<>();
+        errors.put("message", List.of(exception.getMessage()));
+        ApiErrorMessage apiErrorMessage = new ApiErrorMessage(HttpStatus.NOT_FOUND, errors);
+        return new ResponseEntity<>(apiErrorMessage, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
 }

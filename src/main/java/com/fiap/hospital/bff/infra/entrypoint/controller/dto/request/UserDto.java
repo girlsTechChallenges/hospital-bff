@@ -28,6 +28,5 @@ public record UserDto(
 
 
         @NotNull
-        @NotBlank
         Type type
 ) {}

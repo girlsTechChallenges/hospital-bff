@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
+import com.fiap.hospital.bff.infra.exception.TypeNotFoundException;
 import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
 import com.fiap.hospital.bff.infra.persistence.user.TypeEntityRepositoryAdapter;
 import org.slf4j.Logger;
@@ -101,7 +102,7 @@ public class GetGatewayImpl implements GetGateway {
     @Override
     public Optional<Type> getTypeById(Long idType) {
         var findType = typeEntityRepositoryAdapter.findById(idType)
-                .orElseThrow(() -> new UserNotFoundException(idType));
+                .orElseThrow(() -> new TypeNotFoundException(idType));
 
         return Optional.ofNullable(typeMapper.toTypeEntityDomain(findType));
     }

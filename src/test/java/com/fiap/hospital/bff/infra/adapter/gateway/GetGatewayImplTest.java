@@ -3,6 +3,7 @@ package com.fiap.hospital.bff.infra.adapter.gateway;
 import com.fiap.hospital.bff.core.domain.model.token.Token;
 import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.core.domain.model.user.User;
+import com.fiap.hospital.bff.infra.exception.TypeNotFoundException;
 import com.fiap.hospital.bff.infra.exception.UserCredentialsException;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
 import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
@@ -203,6 +204,6 @@ class GetGatewayImplTest {
         Long typeId = 99L;
         when(typeEntityRepositoryAdapter.findById(typeId)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> getGateway.getTypeById(typeId));
+        assertThrows(TypeNotFoundException.class, () -> getGateway.getTypeById(typeId));
     }
 }

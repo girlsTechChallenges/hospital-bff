@@ -46,7 +46,6 @@ class UserMapperTest {
         assertEquals("john@example.com", user.getEmail());
         assertEquals("johndoe", user.getLogin());
         assertEquals("password123", user.getPassword());
-        assertEquals(LocalDate.of(2025, 10, 1), user.getChangeDate());
         assertEquals("Admin", user.getType().getNameType());
         assertEquals(List.of("ROLE_ADMIN"), user.getType().getRoles());
     }

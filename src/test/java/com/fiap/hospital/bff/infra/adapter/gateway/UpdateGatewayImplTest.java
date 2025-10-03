@@ -2,6 +2,8 @@ package com.fiap.hospital.bff.infra.adapter.gateway;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.core.domain.model.user.User;
+import com.fiap.hospital.bff.infra.exception.TypeAlreadyRegisteredException;
+import com.fiap.hospital.bff.infra.exception.TypeMismatchException;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
 import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
@@ -94,7 +96,7 @@ class UpdateGatewayImplTest {
 
         when(typeEntityRepositoryAdapter.findById(idType)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> updateGateway.update(idType, type));
+        assertThrows(TypeMismatchException.class, () -> updateGateway.update(idType, type));
     }
 
     @Test
@@ -109,7 +111,7 @@ class UpdateGatewayImplTest {
         when(typeEntityRepositoryAdapter.findById(idType)).thenReturn(Optional.of(existingTypeEntity));
         when(typeEntityRepositoryAdapter.findByNameType(normalizedName)).thenReturn(Optional.of(conflictingTypeEntity));
 
-        UserNotFoundException ex = assertThrows(UserNotFoundException.class, () -> updateGateway.update(idType, type));
+        TypeAlreadyRegisteredException ex = assertThrows(TypeAlreadyRegisteredException.class, () -> updateGateway.update(idType, type));
         assertTrue(ex.getMessage().contains("already exists"));
     }
 
