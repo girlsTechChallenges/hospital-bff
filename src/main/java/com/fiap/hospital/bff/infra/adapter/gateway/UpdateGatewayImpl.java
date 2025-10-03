@@ -4,6 +4,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
+import com.fiap.hospital.bff.infra.exception.TypeAlreadyRegisteredException;
+import com.fiap.hospital.bff.infra.exception.TypeMismatchException;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
 import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
@@ -63,17 +65,17 @@ public class UpdateGatewayImpl implements UpdateGateway {
         TypeEntity existingIdType = typeEntityRepositoryAdapter.findById(IdType)
                 .orElseThrow(() -> {
                     log.warn("TypeUser with id {} not found for update", IdType);
-                    return new UserNotFoundException("TypeUser not found with id: " + type.getNameType());
+                    return new TypeMismatchException("TypeUser not found with id: " + type.getNameType());
                 });
 
-        // Verifica se o nameType está sendo alterado
         if (!existingIdType.getNameType().equalsIgnoreCase(normalizedType)) {
-            // Verifica se já existe outro registro com o mesmo nameType
-            Optional<TypeEntity> existingNameType = typeEntityRepositoryAdapter.findByNameType(normalizedType);
-            if (existingNameType.isPresent()) {
-                log.warn("TypeUser with nameType '{}' already exists", normalizedType);
-                throw new UserNotFoundException("TypeUser with nameType '" + normalizedType + "' already exists.");
-            }
+
+            typeEntityRepositoryAdapter.findByNameType(normalizedType)
+                .ifPresent(existing -> {
+                    log.warn("TypeUser with nameType '{}' already exists", normalizedType);
+                        throw  new TypeAlreadyRegisteredException("TypeUser with nameType '" + normalizedType + "' already exists.");
+                });
+
         }
 
         existingIdType.setNameType(normalizedType);

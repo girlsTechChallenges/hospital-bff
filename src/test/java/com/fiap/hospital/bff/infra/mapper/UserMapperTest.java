@@ -37,7 +37,6 @@ class UserMapperTest {
                 "john@example.com",
                 "johndoe",
                 "password123",
-                LocalDate.of(2025, 10, 1),
                 new Type(null, "Admin", List.of("ROLE_ADMIN")));
 
         User user = userMapper.toUserDomain(dto);

@@ -31,7 +31,6 @@ class UserDtoTest {
                 "joao.silva@example.com",
                 "joaosilva",
                 "password123",
-                LocalDate.now(),
                 new Type(1L,"DOCTOR", List.of())
         );
 
@@ -46,7 +45,6 @@ class UserDtoTest {
                 "joao.silva@example.com",
                 "joaosilva",
                 "password123",
-                LocalDate.now(),
                 new Type(1L,"DOCTOR", List.of())
         );
 
@@ -62,7 +60,6 @@ class UserDtoTest {
                 null,
                 "joaosilva",
                 "password123",
-                LocalDate.now(),
                 new Type(1L,"DOCTOR", List.of())
         );
 
@@ -78,7 +75,6 @@ class UserDtoTest {
                 "joao.silva@example.com",
                 " ",  // blank
                 "password123",
-                LocalDate.now(),
                 new Type(1L,"DOCTOR", List.of())
         );
 
@@ -94,7 +90,6 @@ class UserDtoTest {
                 "joao.silva@example.com",
                 "joaosilva",
                 "123",  // senha muito curta
-                LocalDate.now(),
                 new Type(1L,"DOCTOR", List.of())
         );
 
@@ -110,7 +105,6 @@ class UserDtoTest {
                 "joao.silva@example.com",
                 "joaosilva",
                 "password123",
-                LocalDate.now(),
                 null
         );
 
