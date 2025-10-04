@@ -19,7 +19,8 @@ import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.ConsultRes
 @RequestMapping("/consults")
 public class EasyConsultController implements EasyConsultControllerDocs {
 
-    private static final Logger log = LoggerFactory.getLogger(EasyConsultController.class);             
+    private static final Logger log = LoggerFactory.getLogger(EasyConsultController.class);
+    private static final String CONSULT_SERVICE_URL = "http://kong:8000/consults/";
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultDto consultaRequest) {
@@ -34,7 +35,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
     public ResponseEntity<ConsultResponseDto> getById(@PathVariable @NotNull Long id) {
         log.info("GET CONSULT BY ID REQUEST {} ", id);
         RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults/" + id;
+        String externalUrl = CONSULT_SERVICE_URL + id;
         var response = restTemplate.getForObject(externalUrl, ConsultResponseDto.class);
         return ResponseEntity.ok(response);
     }
@@ -43,7 +44,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
     public ResponseEntity<List<ConsultResponseDto>> getByPatientId(@PathVariable @NotNull Long patientId) {
         log.info("GET CONSULT BY PATIENT ID REQUEST {} ", patientId);
         RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults/patient/" + patientId;
+        String externalUrl = CONSULT_SERVICE_URL + "patient/" + patientId;
         var response = restTemplate.getForObject(externalUrl, ConsultResponseDto[].class);
         return ResponseEntity.ok(List.of(response));
     }
@@ -52,8 +53,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
     public ResponseEntity<List<ConsultResponseDto>> getAll() {
         log.info("GET ALL CONSULTS REQUEST");
         RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults/";
-        var response = restTemplate.getForObject(externalUrl, ConsultResponseDto[].class);
+        var response = restTemplate.getForObject(CONSULT_SERVICE_URL, ConsultResponseDto[].class);
         return ResponseEntity.ok(List.of(response));
     }
 
@@ -62,7 +62,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
             @Valid ConsultUpdateDto consultUpdateRequest) {
         log.info("PUT CONSULT REQUEST {} ", consultUpdateRequest);
         RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults/" + id;
+        String externalUrl = CONSULT_SERVICE_URL + id;
         restTemplate.put(externalUrl, consultUpdateRequest);
         return ResponseEntity.ok().build();
     }

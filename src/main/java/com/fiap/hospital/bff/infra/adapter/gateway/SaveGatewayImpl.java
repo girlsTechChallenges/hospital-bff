@@ -8,10 +8,7 @@ import com.fiap.hospital.bff.infra.exception.UserAlreadyRegisteredException;
 import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
 import com.fiap.hospital.bff.infra.persistence.user.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,16 +16,13 @@ import java.util.List;
 @Service
 public class SaveGatewayImpl implements SaveGateway {
 
-    private static final Logger log = LoggerFactory.getLogger(SaveGatewayImpl.class);
-    private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final TypeRepository typeRepository;
     private final UserMapper userMapper;
     private final TypeEntityMapper typeMapper;
     private final TypeEntityRepositoryAdapter typeEntityRepositoryAdapter;
 
-    public SaveGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TypeRepository typeRepository, UserMapper userMapper, TypeEntityMapper typeMapper, TypeEntityRepositoryAdapter typeUserRepositoryAdapter) {
-        this.passwordEncoder = passwordEncoder;
+    public SaveGatewayImpl( UserRepository userRepository, TypeRepository typeRepository, UserMapper userMapper, TypeEntityMapper typeMapper, TypeEntityRepositoryAdapter typeUserRepositoryAdapter) {
         this.userRepository = userRepository;
         this.typeRepository = typeRepository;
         this.userMapper = userMapper;

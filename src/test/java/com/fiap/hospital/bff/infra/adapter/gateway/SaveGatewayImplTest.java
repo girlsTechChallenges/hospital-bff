@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 class SaveGatewayImplTest {
 
-    private BCryptPasswordEncoder passwordEncoder;
+
     private UserRepository userRepository;
     private TypeRepository typeRepository;
     private UserMapper userMapper;
@@ -35,14 +35,13 @@ class SaveGatewayImplTest {
 
     @BeforeEach
     void setup() {
-        passwordEncoder = mock(BCryptPasswordEncoder.class);
         userRepository = mock(UserRepository.class);
         typeRepository = mock(TypeRepository.class);
         userMapper = mock(UserMapper.class);
         typeMapper = mock(TypeEntityMapper.class);
         typeEntityRepositoryAdapter = mock(TypeEntityRepositoryAdapter.class);
 
-        saveGateway = new SaveGatewayImpl(passwordEncoder, userRepository, typeRepository, userMapper, typeMapper, typeEntityRepositoryAdapter);
+        saveGateway = new SaveGatewayImpl(userRepository, typeRepository, userMapper, typeMapper, typeEntityRepositoryAdapter);
     }
 
     @Test

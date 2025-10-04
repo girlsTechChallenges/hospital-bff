@@ -42,7 +42,7 @@ public class GetUseCase implements ConsultQueryUseCase {
                 .flatMap(t -> t.getRoles().stream())
                 .toList();
         var claims = JwtClaimsSet.builder()
-                .issuer("BackendFortalezaSabor")
+                .issuer("BackendHospitalBFF")
                 .subject(email)
                 .issuedAt(now)
                 .claim("scopes", scopes)

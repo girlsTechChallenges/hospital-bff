@@ -112,8 +112,7 @@ public class UpdateGatewayImpl implements UpdateGateway {
             throw new UserNotFoundException(email);
 
         } catch (Exception e) {
-            log.error("Erro ao atualizar a senha do usuário", e);
-            throw new RuntimeException("Erro ao atualizar a senha do usuário", e);
+            throw new RuntimeException("Error updating user password", e);
         }
     }
 

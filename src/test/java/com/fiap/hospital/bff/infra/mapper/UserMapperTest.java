@@ -22,12 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserMapperTest {
 
     private UserMapper userMapper;
-    private TypeEntityMapper typeEntityMapper;
+
 
     @BeforeEach
     void setUp() {
-        typeEntityMapper = new TypeEntityMapper();
-        userMapper = new UserMapper(typeEntityMapper);
     }
 
     @Test

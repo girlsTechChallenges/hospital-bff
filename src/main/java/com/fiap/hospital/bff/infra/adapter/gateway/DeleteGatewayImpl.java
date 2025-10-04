@@ -10,9 +10,6 @@ import com.fiap.hospital.bff.infra.persistence.user.TypeEntity;
 import com.fiap.hospital.bff.infra.persistence.user.TypeRepository;
 import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 import com.fiap.hospital.bff.infra.persistence.user.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.fiap.hospital.bff.core.domain.model.user.User;
 import com.fiap.hospital.bff.core.outputport.DeleteGateway;
 import org.springframework.stereotype.Service;
@@ -20,15 +17,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class DeleteGatewayImpl implements DeleteGateway {
 
-    private static final Logger log = LoggerFactory.getLogger(DeleteGatewayImpl.class);
-    private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final UserMapper mapper;
     private final TypeEntityMapper typeMapper;
     private final TypeRepository typeRepository;
 
-    public DeleteGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, UserMapper mapper, TypeEntityMapper typeMapper, TypeRepository typeRepository) {
-        this.passwordEncoder = passwordEncoder;
+    public DeleteGatewayImpl( UserRepository userRepository, UserMapper mapper, TypeEntityMapper typeMapper, TypeRepository typeRepository) {
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.typeMapper = typeMapper;

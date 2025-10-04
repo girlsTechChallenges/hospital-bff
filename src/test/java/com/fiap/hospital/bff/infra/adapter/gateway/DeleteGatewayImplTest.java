@@ -12,6 +12,7 @@ import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 import com.fiap.hospital.bff.infra.persistence.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
@@ -25,7 +26,6 @@ class DeleteGatewayImplTest {
     private UserMapper userMapper;
     private TypeRepository typeRepository;
     private TypeEntityMapper typeMapper;
-    private BCryptPasswordEncoder passwordEncoder;
     private DeleteGatewayImpl deleteGateway;
 
     @BeforeEach
@@ -34,8 +34,7 @@ class DeleteGatewayImplTest {
         userMapper = mock(UserMapper.class);
         typeRepository = mock(TypeRepository.class);
         typeMapper = mock(TypeEntityMapper.class);
-        passwordEncoder = mock(BCryptPasswordEncoder.class); // não usado, mas obrigatório no construtor
-        deleteGateway = new DeleteGatewayImpl(passwordEncoder, userRepository, userMapper, typeMapper, typeRepository);
+        deleteGateway = new DeleteGatewayImpl(userRepository, userMapper, typeMapper, typeRepository);
     }
 
     // -------------------- deleteById --------------------

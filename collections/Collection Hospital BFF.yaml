@@ -12,8 +12,8 @@ collection:
       created: 1755887444268
       modified: 1759513108550
       sortKey: -1755887443003
-      description: Collection completa para testar todos os endpoints da API Fortaleza
-        de Sabor, incluindo gestão de usuários, restaurantes e autenticação.
+      description: Collection completa para testar todos os endpoints da API Hospital BFF
+        incluindo gestão de usuários e autenticação.
     children:
       - name: 👤 User Management
         meta:
@@ -1108,7 +1108,7 @@ collection:
               text: |-
                 {
                     "nameType": "NURSE",
-                    "roles": ["consultations_write", "history_read"]
+                    "roles": ["consult_write", "history_read"]
                   }
             headers:
               - name: Content-Type
@@ -1138,7 +1138,7 @@ collection:
               text: |-
                 {
                     "nameType": "PATIENT",
-                    "roles": ["consultations_read"]
+                    "roles": ["consult_read"]
                   }
             headers:
               - name: Content-Type
