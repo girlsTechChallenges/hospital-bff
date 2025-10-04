@@ -2,7 +2,6 @@ package com.fiap.hospital.bff.infra.entrypoint.controller.dto.request;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
 import jakarta.validation.constraints.*;
-import java.time.LocalDate;
 
 public record UserDto(
         @NotNull

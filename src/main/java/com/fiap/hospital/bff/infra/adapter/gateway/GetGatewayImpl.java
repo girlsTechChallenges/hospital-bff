@@ -79,7 +79,7 @@ public class GetGatewayImpl implements GetGateway {
         var type = user.get().getTypes().getNameType();
         var scopes = typeEntityRepositoryAdapter.findByNameType(type).stream()
                 .flatMap(t -> t.getRoles().stream())
-                .collect(Collectors.toList());
+                .toList();
 
         var claims = JwtClaimsSet.builder()
                 .issuer("BackendHospitalBff")

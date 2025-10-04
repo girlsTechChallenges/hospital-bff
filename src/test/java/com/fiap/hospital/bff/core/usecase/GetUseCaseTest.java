@@ -7,12 +7,9 @@ import com.fiap.hospital.bff.core.outputport.GetGateway;
 import com.fiap.hospital.bff.infra.exception.UserCredentialsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 
-import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

@@ -40,7 +40,7 @@ public class DeleteGatewayImpl implements DeleteGateway {
         UserEntity findUser = userRepository.findById(idUser)
                 .orElseThrow(() -> new UserNotFoundException(idUser));
 
-        Optional<UserEntity> user = userRepository.findById(idUser);
+        Optional<UserEntity> user = userRepository.findById(findUser.getId());
         userRepository.deleteById(idUser);
         return user.map(mapper::toUserDomain);
     }
@@ -51,7 +51,7 @@ public class DeleteGatewayImpl implements DeleteGateway {
                 .orElseThrow(() -> new UserNotFoundException(idType));
 
         Optional<TypeEntity> type = typeRepository.findById(idType);
-        typeRepository.deleteById(idType);
+        typeRepository.deleteById(findType.getId());
         return type.map(typeMapper::toTypeDomain);
     }
 }

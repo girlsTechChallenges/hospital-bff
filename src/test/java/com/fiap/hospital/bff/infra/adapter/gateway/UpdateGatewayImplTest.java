@@ -13,8 +13,6 @@ import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 import com.fiap.hospital.bff.infra.persistence.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;

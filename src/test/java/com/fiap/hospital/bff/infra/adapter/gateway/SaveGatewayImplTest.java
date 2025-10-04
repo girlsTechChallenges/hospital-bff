@@ -108,7 +108,6 @@ class SaveGatewayImplTest {
         Type type = new Type(1L,"admin", List.of("ROLE_ADMIN"));
         String normalizedName = "ADMIN";
 
-        TypeEntity newTypeEntity = new TypeEntity(null, normalizedName, type.getRoles());
         TypeEntity savedTypeEntity = new TypeEntity(1L, normalizedName, type.getRoles());
 
         when(typeEntityRepositoryAdapter.findByNameType(normalizedName)).thenReturn(Optional.empty());
@@ -133,7 +132,6 @@ class SaveGatewayImplTest {
         Type type = new Type(1L,"ADMIN", List.of("ROLE_ADMIN"));
         String normalizedName = "ADMIN";
 
-        TypeEntity newTypeEntity = new TypeEntity(null, normalizedName, type.getRoles());
         TypeEntity existingTypeEntity = new TypeEntity(1L, normalizedName, type.getRoles());
 
         when(typeEntityRepositoryAdapter.findByNameType(normalizedName)).thenReturn(Optional.empty());

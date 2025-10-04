@@ -1,6 +1,6 @@
 package com.fiap.hospital.bff.infra.adapter.gateway;
 
-import java.util.Objects;
+
 import java.util.Optional;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
@@ -60,11 +60,11 @@ public class UpdateGatewayImpl implements UpdateGateway {
     }
 
     @Override
-    public Optional<Type>  update(Long IdType, Type type) {
+    public Optional<Type>  update(Long idtype, Type type) {
         String normalizedType = normalizeTypeName(type.getNameType());
-        TypeEntity existingIdType = typeEntityRepositoryAdapter.findById(IdType)
+        TypeEntity existingIdType = typeEntityRepositoryAdapter.findById(idtype)
                 .orElseThrow(() -> {
-                    log.warn("TypeUser with id {} not found for update", IdType);
+                    log.warn("TypeUser with id {} not found for update", idtype);
                     return new TypeMismatchException("TypeUser not found with id: " + type.getNameType());
                 });
 
@@ -96,16 +96,17 @@ public class UpdateGatewayImpl implements UpdateGateway {
 
     @Override
     public void updatePassword(String email, String password) {
-
         var passEncoded = passwordEncoder.encode(password);
         var user = userRepository.findByEmail(email);
 
         try {
-            if(Objects.isNull(user)){
+            if (user.isEmpty()) {
                 throw new UserNotFoundException(email);
             }
-            user.get().setPassword(passEncoded);
-            userRepository.save(user.get());
+
+            var userEntity = user.get();
+            userEntity.setPassword(passEncoded);
+            userRepository.save(userEntity);
 
         } catch (UserNotFoundException e) {
             throw new UserNotFoundException(email);
@@ -115,6 +116,7 @@ public class UpdateGatewayImpl implements UpdateGateway {
             throw new RuntimeException("Erro ao atualizar a senha do usuário", e);
         }
     }
+
 
     private TypeEntity findOrCreateType(String formattedType, List<String> roles) {
         return typeEntityRepositoryAdapter.findByNameType(formattedType)

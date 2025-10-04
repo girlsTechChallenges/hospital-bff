@@ -14,13 +14,11 @@ import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 import com.fiap.hospital.bff.infra.persistence.user.UserRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 

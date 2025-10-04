@@ -12,21 +12,12 @@ import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserDto;
 import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static com.fiap.hospital.bff.infra.common.MessageConstants.USER_NOT_FOUND;
 
 @Component
 public class UserMapper {
-
-    private final TypeEntityMapper typeEntityMapper;
-
-    public UserMapper(TypeEntityMapper typeEntityMapper) {
-        this.typeEntityMapper = typeEntityMapper;
-    }
 
 
     public User toUserDomain(UserDto userRequestDto) {

@@ -34,6 +34,6 @@ public class UserEntity {
     private TypeEntity types;
 
     public UserEntity() {
-
+        // Default constructor required by JPA
     }
 }

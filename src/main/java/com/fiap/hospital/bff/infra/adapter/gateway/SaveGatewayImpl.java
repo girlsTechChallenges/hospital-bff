@@ -62,9 +62,8 @@ public class SaveGatewayImpl implements SaveGateway {
     public Type saveType(Type type) {
         String normalizedType = normalizeTypeName(type.getNameType());
         TypeEntity typeEntity = findOrCreateType(normalizedType, type.getRoles());
-        Type createdTypeUser = typeMapper.toTypeEntityDomain(typeEntity);
+        return typeMapper.toTypeEntityDomain(typeEntity);
 
-        return createdTypeUser;
     }
 
     private String normalizeTypeName(String name) {
