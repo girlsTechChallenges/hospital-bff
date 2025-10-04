@@ -44,7 +44,7 @@ public class GetUseCase implements ConsultQueryUseCase {
                 .collect(Collectors.toList());
 
         var claims = JwtClaimsSet.builder()
-                .issuer("BackendFortalezaSabor")
+                .issuer("BackendHospitalBFF")
                 .subject(email)
                 .issuedAt(now)
                 .claim("scopes", scopes)
