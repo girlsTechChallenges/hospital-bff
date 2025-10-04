@@ -1,8 +1,11 @@
 package com.fiap.hospital.bff.infra.entrypoint.controller;
 
+import com.fiap.hospital.bff.infra.entrypoint.docs.EasyConsultControllerDocs;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultUpdateRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.response.ConsultResponseDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -10,10 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import com.fiap.hospital.bff.infra.entrypoint.controller.docs.EasyConsultControllerDocs;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.ConsultDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.ConsultUpdateDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.ConsultResponseDto;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/consults")
@@ -23,7 +24,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
     private static final String CONSULT_SERVICE_URL = "http://kong:8000/consults/";
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultDto consultaRequest) {
+    public ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultRequestDto consultaRequest) {
         log.info("POST CONSULT REQUEST: {} ", consultaRequest);
         RestTemplate restTemplate = new RestTemplate();
         String externalUrl = "http://kong:8000/consults";
@@ -59,7 +60,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(@NotNull Long id,
-            @Valid ConsultUpdateDto consultUpdateRequest) {
+            @Valid ConsultUpdateRequestDto consultUpdateRequest) {
         log.info("PUT CONSULT REQUEST {} ", consultUpdateRequest);
         RestTemplate restTemplate = new RestTemplate();
         String externalUrl = CONSULT_SERVICE_URL + id;

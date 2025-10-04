@@ -14,3 +14,4 @@ public class Type {
     String nameType;
     List<String> roles;
 }
+

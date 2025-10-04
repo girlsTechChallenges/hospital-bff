@@ -1,17 +1,17 @@
 package com.fiap.hospital.bff.infra.adapter.gateway;
 
-
 import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.core.domain.model.user.User;
 import com.fiap.hospital.bff.core.outputport.SaveGateway;
 import com.fiap.hospital.bff.infra.exception.UserAlreadyRegisteredException;
-import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
+import com.fiap.hospital.bff.infra.mapper.TypeMapper;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
-import com.fiap.hospital.bff.infra.persistence.user.*;
+import com.fiap.hospital.bff.infra.persistence.entity.TypeEntity;
+import com.fiap.hospital.bff.infra.persistence.entity.UserEntity;
+import com.fiap.hospital.bff.infra.persistence.repository.TypeRepository;
+import com.fiap.hospital.bff.infra.persistence.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class SaveGatewayImpl implements SaveGateway {
@@ -19,45 +19,57 @@ public class SaveGatewayImpl implements SaveGateway {
     private final UserRepository userRepository;
     private final TypeRepository typeRepository;
     private final UserMapper userMapper;
-    private final TypeEntityMapper typeMapper;
-    private final TypeEntityRepositoryAdapter typeEntityRepositoryAdapter;
+    private final TypeMapper typeMapper;
 
-    public SaveGatewayImpl( UserRepository userRepository, TypeRepository typeRepository, UserMapper userMapper, TypeEntityMapper typeMapper, TypeEntityRepositoryAdapter typeUserRepositoryAdapter) {
+    public SaveGatewayImpl(UserRepository userRepository,
+                           TypeRepository typeRepository,
+                           UserMapper userMapper,
+                           TypeMapper typeMapper) {
         this.userRepository = userRepository;
         this.typeRepository = typeRepository;
         this.userMapper = userMapper;
         this.typeMapper = typeMapper;
-        this.typeEntityRepositoryAdapter = typeUserRepositoryAdapter;
     }
 
     @Override
     public User save(User user) {
-        userRepository.findByEmail(user.getEmail())
-                .ifPresent(existingUser -> {
-                    throw new UserAlreadyRegisteredException(
-                            "This user already exists. Check your credentials or recover your password."
-                    );
-                });
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new UserAlreadyRegisteredException(
+                    "This user already exists. Check your credentials or recover your password."
+            );
+        }
 
-        UserEntity userEntity = userMapper.toUserEntity(user);
-
-        TypeEntity type = typeRepository.findByNameType(user.getType().getNameType())
+        // Primeiro resolve o tipo
+        String normalizedType = normalizeTypeName(user.getType().getNameType());
+        TypeEntity typeEntity = typeRepository.findByNameType(normalizedType)
                 .orElseThrow(() -> new RuntimeException("Type not found"));
 
-        userEntity.setTypes(type);
+        // Agora mapeia o usuário com o tipo resolvido
+        UserEntity userEntity = userMapper.toEntity(user, typeEntity);
 
         UserEntity savedUser = userRepository.save(userEntity);
 
-        return userMapper.toUserDomain(savedUser);
+        return userMapper.toDomain(savedUser);
     }
-
 
     @Override
     public Type saveType(Type type) {
         String normalizedType = normalizeTypeName(type.getNameType());
-        TypeEntity typeEntity = findOrCreateType(normalizedType, type.getRoles());
-        return typeMapper.toTypeEntityDomain(typeEntity);
 
+        // Garante que o tipo seja criado com o enum correto
+        TypeEntity typeEntity = typeMapper.toEntity(new Type(
+                type.getId(),
+                normalizedType,
+                type.getRoles()
+        ));
+
+        try {
+            return typeMapper.toDomain(typeRepository.save(typeEntity));
+        } catch (DataIntegrityViolationException e) {
+            return typeRepository.findByNameType(normalizedType)
+                    .map(typeMapper::toDomain)
+                    .orElseThrow(() -> new IllegalArgumentException("User type already exists."));
+        }
     }
 
     private String normalizeTypeName(String name) {
@@ -65,19 +77,5 @@ public class SaveGatewayImpl implements SaveGateway {
             throw new IllegalArgumentException("User type cannot be empty.");
         }
         return name.trim().toUpperCase();
-    }
-
-    private TypeEntity findOrCreateType(String normalizedType, List<String> roles) {
-        return typeEntityRepositoryAdapter.findByNameType(normalizedType)
-                .orElseGet(() -> safelySaveType(normalizedType, roles));
-    }
-
-    private TypeEntity safelySaveType(String normalizedType, List<String> roles) {
-        try {
-            return typeEntityRepositoryAdapter.save(new TypeEntity(null, normalizedType, roles));
-        } catch (DataIntegrityViolationException e) {
-            return typeEntityRepositoryAdapter.findByNameType(normalizedType)
-                    .orElseThrow(() -> new IllegalArgumentException("User type already exists."));
-        }
     }
 }

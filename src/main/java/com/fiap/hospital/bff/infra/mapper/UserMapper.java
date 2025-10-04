@@ -1,92 +1,129 @@
 package com.fiap.hospital.bff.infra.mapper;
 
-import com.fiap.hospital.bff.core.domain.model.user.Type;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UpdateRequestDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.UserResponseDto;
-import com.fiap.hospital.bff.infra.persistence.user.TypeEntity;
-import org.springframework.stereotype.Component;
 import com.fiap.hospital.bff.core.domain.model.token.Token;
+import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.core.domain.model.user.User;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserAuthDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserDto;
-import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.UpdateRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserAuthRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.response.UserResponseDto;
+import com.fiap.hospital.bff.infra.persistence.entity.TypeEntity;
+import com.fiap.hospital.bff.infra.persistence.entity.UserEntity;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-
-import static com.fiap.hospital.bff.infra.common.MessageConstants.USER_NOT_FOUND;
 
 @Component
 public class UserMapper {
 
-
-    public User toUserDomain(UserDto userRequestDto) {
+    // Mapeia DTO para domínio
+    public User toDomain(UserRequestDto dto, Type type) {
+        if (dto == null || type == null) return null;
 
         return new User(
                 null,
-                userRequestDto.name(),
-                userRequestDto.email(),
-                userRequestDto.login(),
-                userRequestDto.password(),
+                dto.name(),
+                dto.email(),
+                dto.login(),
+                dto.password(),
                 LocalDate.now(),
-                userRequestDto.type());
-    }
-
-     public User updateUserDomain(UpdateRequestDto updateRequestDto) {
-
-         return new User(
-                 updateRequestDto.name(),
-                 updateRequestDto.email(),
-                 updateRequestDto.password(),
-                 updateRequestDto.type());
-     }
-
-    public UserEntity toUserEntity(User user) {
-        TypeEntity type = new TypeEntity();
-        type.setNameType(user.getType().getNameType());
-        type.setRoles(user.getType().getRoles());
-
-        return new UserEntity(
-                null,
-                user.getName(),
-                user.getEmail(),
-                user.getLogin(),
-                user.getPassword(),
-                user.getChangeDate(),
                 type
         );
     }
 
-    public User toUserDomain(UserEntity userEntity) {
+    // Mapeia domínio para entidade com TypeEntity resolvido
+    public UserEntity toEntity(User user, TypeEntity typeEntity) {
+        if (user == null || typeEntity == null) return null;
+
+        LocalDateTime changeDateTime = user.getChangeDate() != null
+                ? user.getChangeDate().atStartOfDay()
+                : LocalDateTime.now();
+
+        return UserEntity.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .login(user.getLogin())
+                .password(user.getPassword())
+                .changeDate(changeDateTime)
+                .type(typeEntity)
+                .build();
+    }
+
+    // Mapeia entidade para domínio
+    public User toDomain(UserEntity entity) {
+        if (entity == null) return null;
+
+        Type type = null;
+        if (entity.getType() != null) {
+            List<String> roles = entity.getType().getRoles() != null
+                    ? entity.getType().getRoles().stream().toList()
+                    : List.of();
+
+            type = new Type(
+                    entity.getType().getId(),
+                    entity.getType().getNameType(),
+                    roles
+            );
+        }
+
+        LocalDate changeDate = entity.getChangeDate() != null
+                ? entity.getChangeDate().toLocalDate()
+                : null;
 
         return new User(
-                userEntity.getId(),
-                userEntity.getName(),
-                userEntity.getEmail(),
-                userEntity.getLogin(),
-                userEntity.getPassword(),
-                userEntity.getChangeDate(),
-                new Type(userEntity.getTypes().getId(), userEntity.getTypes().getNameType(), userEntity.getTypes().getRoles())
+                entity.getId(),
+                entity.getName(),
+                entity.getEmail(),
+                entity.getLogin(),
+                entity.getPassword(),
+                changeDate,
+                type
         );
     }
 
-     public UserResponseDto toUserResponseDto(User user) {
+    // Mapeia domínio para resposta DTO
+    public UserResponseDto toResponseDto(User user) {
+        if (user == null) return null;
 
-         return new UserResponseDto(user.getId(), user.getName(), user.getLogin(), user.getEmail(), user.getType().getNameType());
-     }
+        String typeName = user.getType() != null ? user.getType().getNameType() : null;
 
-     public UserResponseDto getUserByIdToUserResponseDto(Optional<User> optionalUser) {
-
-         User user = optionalUser.orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-
-       
-         return new UserResponseDto(user.getId(), user.getName(), user.getLogin(), user.getEmail(), user.getType().getNameType());
-     }
-
-
-
-    public UserAuthDto toTokenResponseDto(Token token) {
-        return new UserAuthDto(token.getAccessToken(), token.getExpiresIn(), token.getScopes());
+        return new UserResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getLogin(),
+                user.getEmail(),
+                typeName
+        );
     }
 
+    public UserResponseDto toResponseDto(Optional<User> optionalUser) {
+        return optionalUser.map(this::toResponseDto).orElse(null);
+    }
+
+    // Mapeia Token para DTO de autenticação
+    public UserAuthRequestDto toAuthDto(Token token) {
+        if (token == null) return null;
+
+        return new UserAuthRequestDto(
+                token.getAccessToken(),
+                token.getExpiresIn(),
+                token.getScopes()
+        );
+    }
+
+    // Atualização parcial
+    public User toDomain(UpdateRequestDto dto, Type type) {
+        if (dto == null || type == null) return null;
+
+        return new User(
+                dto.name(),
+                dto.email(),
+                dto.password(),
+                type
+        );
+    }
 }

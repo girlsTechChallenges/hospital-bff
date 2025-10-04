@@ -6,11 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
-import com.fiap.hospital.bff.infra.exception.TypeNotFoundException;
-import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
-import com.fiap.hospital.bff.infra.persistence.user.TypeEntityRepositoryAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fiap.hospital.bff.infra.mapper.TypeMapper;
+import com.fiap.hospital.bff.infra.persistence.repository.TypeRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -23,63 +20,67 @@ import com.fiap.hospital.bff.core.outputport.GetGateway;
 import com.fiap.hospital.bff.infra.exception.UserCredentialsException;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
-import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
-import com.fiap.hospital.bff.infra.persistence.user.UserRepositoryAdapter;
+import com.fiap.hospital.bff.infra.persistence.entity.UserEntity;
+import com.fiap.hospital.bff.infra.persistence.repository.UserRepository;
 
 @Component
 public class GetGatewayImpl implements GetGateway {
 
-    Logger log = LoggerFactory.getLogger(GetGatewayImpl.class);
-
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
-    private final UserRepositoryAdapter userRepositoryAdapter;
-    private final TypeEntityRepositoryAdapter typeEntityRepositoryAdapter;
+    private final UserRepository userRepository;
+    private final TypeRepository typeRepository;
     private final UserMapper userMapper;
-    private final TypeEntityMapper typeMapper;
+    private final TypeMapper typeMapper;
 
-    public GetGatewayImpl(UserRepositoryAdapter userRepositoryAdapter, UserMapper userMapper, BCryptPasswordEncoder passwordEncoder, JwtEncoder jwtEncoder, TypeEntityRepositoryAdapter typeEntityRepositoryAdapter, TypeEntityMapper typeMapper) {
-        this.userRepositoryAdapter = userRepositoryAdapter;
+    public GetGatewayImpl(UserRepository userRepository, UserMapper userMapper, BCryptPasswordEncoder passwordEncoder,
+                          JwtEncoder jwtEncoder, TypeRepository typeRepository, TypeMapper typeMapper) {
+        this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtEncoder = jwtEncoder;
-        this.typeEntityRepositoryAdapter = typeEntityRepositoryAdapter;
+        this.typeRepository = typeRepository;
         this.typeMapper = typeMapper;
     }
 
     @Override
     public List<User> getAll() {
-        return userRepositoryAdapter.findAll().stream().map(userMapper::toUserDomain).toList();
+        return userRepository.findAll().stream().map(userMapper::toDomain).toList();
     }
 
     @Override
     public Optional<User> getById(Long idUser) {
-        var findUser = userRepositoryAdapter.findById(idUser)
+        var findUser = userRepository.findById(idUser)
                 .orElseThrow(() -> new UserNotFoundException(idUser));
 
-        return Optional.ofNullable(userMapper.toUserDomain(findUser));
+        return Optional.ofNullable(userMapper.toDomain(findUser));
     }
-
 
     @Override
     public Optional<User> findByEmail(String email) {
-        Optional<UserEntity> user = userRepositoryAdapter.findByEmail(email);
-        return user.map(userMapper::toUserDomain);
+        Optional<UserEntity> user = userRepository.findByEmail(email);
+        return user.map(userMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Type> getTypeByName(String name) {
+        return typeRepository.findByNameType(name).map(typeMapper::toDomain);
     }
 
     public Token validateLogin(String email, String password) {
-
-        var user = userRepositoryAdapter.findByEmail(email);
+        // Usar query otimizada com FETCH JOIN
+        var user = userRepository.findByEmailWithType(email);
         if(user.isEmpty() || !isLoginCorrect(email, password, passwordEncoder)) {
             throw new UserCredentialsException("Invalid email or password");
         }
 
         var now = Instant.now();
         var expiresIn = 300L;
-        var type = user.get().getTypes().getNameType();
-        var scopes = typeEntityRepositoryAdapter.findByNameType(type).stream()
-                .flatMap(t -> t.getRoles().stream())
-                .toList();
+        // Usar o campo correto 'type' ao invés de 'types'
+        var type = user.get().getType().getNameType();
+        var scopes = typeRepository.findByNameTypeWithRoles(type)
+                .map(t -> t.getRoles().stream().toList())
+                .orElse(List.of());
 
         var claims = JwtClaimsSet.builder()
                 .issuer("BackendHospitalBff")
@@ -93,28 +94,17 @@ public class GetGatewayImpl implements GetGateway {
     }
 
      private boolean isLoginCorrect(String email, String password, PasswordEncoder passwordEncoder) {
-        var userPassword = userRepositoryAdapter.findByEmail(email).stream().map(UserEntity::getPassword).collect(Collectors.joining());
+        var userPassword = userRepository.findByEmail(email).stream().map(UserEntity::getPassword).collect(Collectors.joining());
         return passwordEncoder.matches(password, userPassword);
     }
 
     @Override
     public List<Type> getAllTypes() {
-        return typeEntityRepositoryAdapter.findAll().stream().map(typeMapper::toTypeEntityDomain).toList();
+        return typeRepository.findAll().stream().map(typeMapper::toDomain).toList();
     }
 
     @Override
-    public Optional<Type> getTypeById(Long idType) {
-        var findType = typeEntityRepositoryAdapter.findById(idType)
-                .orElseThrow(() -> new TypeNotFoundException(idType));
-
-        return Optional.ofNullable(typeMapper.toTypeEntityDomain(findType));
-    }
-
-    @Override
-    public Optional<Type> getTypeByName(String nameType) {
-        var findType = typeEntityRepositoryAdapter.findByNameType(nameType)
-                .orElseThrow(() -> new TypeNotFoundException(nameType));
-
-        return Optional.ofNullable(typeMapper.toTypeEntityDomain(findType));
+    public Optional<Type> getTypeById(Long id) {
+        return typeRepository.findById(id).map(typeMapper::toDomain);
     }
 }

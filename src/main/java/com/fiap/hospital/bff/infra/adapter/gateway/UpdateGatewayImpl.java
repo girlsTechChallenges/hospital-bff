@@ -1,23 +1,24 @@
 package com.fiap.hospital.bff.infra.adapter.gateway;
 
-
 import java.util.Optional;
+import java.util.Set;
 
 import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.infra.exception.TypeAlreadyRegisteredException;
 import com.fiap.hospital.bff.infra.exception.TypeMismatchException;
 import com.fiap.hospital.bff.infra.exception.UserNotFoundException;
-import com.fiap.hospital.bff.infra.mapper.TypeEntityMapper;
+import com.fiap.hospital.bff.infra.mapper.TypeMapper;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
-import com.fiap.hospital.bff.infra.persistence.user.*;
+import com.fiap.hospital.bff.infra.persistence.entity.TypeEntity;
+import com.fiap.hospital.bff.infra.persistence.repository.TypeRepository;
+import com.fiap.hospital.bff.infra.persistence.entity.UserEntity;
+import com.fiap.hospital.bff.infra.persistence.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.fiap.hospital.bff.core.domain.model.user.User;
 import com.fiap.hospital.bff.core.outputport.UpdateGateway;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class UpdateGatewayImpl implements UpdateGateway {
@@ -25,15 +26,15 @@ public class UpdateGatewayImpl implements UpdateGateway {
     private static final Logger log = LoggerFactory.getLogger(UpdateGatewayImpl.class);
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final TypeEntityRepositoryAdapter typeEntityRepositoryAdapter;
-    private final UserMapper mapper;
-    private final TypeEntityMapper typeMapper;
+    private final TypeRepository typeRepository;
+    private final UserMapper userMapper;
+    private final TypeMapper typeMapper;
 
-    public UpdateGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TypeEntityRepositoryAdapter typeEntityRepositoryAdapter, UserMapper mapper, TypeEntityMapper typeMapper) {
+    public UpdateGatewayImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TypeRepository typeRepository, UserMapper userMapper, TypeMapper typeMapper) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
-        this.typeEntityRepositoryAdapter = typeEntityRepositoryAdapter;
-        this.mapper = mapper;
+        this.typeRepository = typeRepository;
+        this.userMapper = userMapper;
         this.typeMapper = typeMapper;
     }
 
@@ -48,40 +49,39 @@ public class UpdateGatewayImpl implements UpdateGateway {
         if (user != null) {
             findUser.setName(user.getName());
             findUser.setEmail(user.getEmail());
-            findUser.setPassword(user.getPassword());
-            TypeEntity typo = findOrCreateType(
+            findUser.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            TypeEntity type = findOrCreateType(
                     normalizeTypeName(user.getType().getNameType()),
-                    user.getType().getRoles());
-            findUser.setTypes(typo);
+                    Set.copyOf(user.getType().getRoles()));
+            findUser.setType(type);
         }
         log.info("UserEntity {} found for update", findUser);
         UserEntity actualization = userRepository.save(findUser);
-        return Optional.ofNullable(mapper.toUserDomain(actualization));
+        return Optional.ofNullable(userMapper.toDomain(actualization));
     }
 
     @Override
-    public Optional<Type>  update(Long idtype, Type type) {
+    public Optional<Type> update(Long idtype, Type type) {
         String normalizedType = normalizeTypeName(type.getNameType());
-        TypeEntity existingIdType = typeEntityRepositoryAdapter.findById(idtype)
+        TypeEntity existingIdType = typeRepository.findById(idtype)
                 .orElseThrow(() -> {
                     log.warn("TypeUser with id {} not found for update", idtype);
                     return new TypeMismatchException("TypeUser not found with id: " + type.getNameType());
                 });
 
         if (!existingIdType.getNameType().equalsIgnoreCase(normalizedType)) {
-
-            typeEntityRepositoryAdapter.findByNameType(normalizedType)
+            typeRepository.findByNameType(normalizedType)
                 .ifPresent(existing -> {
                     log.warn("TypeUser with nameType '{}' already exists", normalizedType);
-                        throw  new TypeAlreadyRegisteredException("TypeUser with nameType '" + normalizedType + "' already exists.");
+                    throw new TypeAlreadyRegisteredException("TypeUser with nameType '" + normalizedType + "' already exists.");
                 });
-
         }
 
         existingIdType.setNameType(normalizedType);
-        existingIdType.setRoles(type.getRoles());
-        TypeEntity updatedEntity = typeEntityRepositoryAdapter.save(existingIdType);
-        Type updatedTypeUser = typeMapper.toTypeEntityDomain(updatedEntity);
+        existingIdType.setRoles(Set.copyOf(type.getRoles()));
+        TypeEntity updatedEntity = typeRepository.save(existingIdType);
+        Type updatedTypeUser = typeMapper.toDomain(updatedEntity);
 
         log.info("TypeUser updated successfully: {}", updatedTypeUser);
         return Optional.ofNullable(updatedTypeUser);
@@ -94,43 +94,24 @@ public class UpdateGatewayImpl implements UpdateGateway {
         return name.trim().toUpperCase();
     }
 
+    private TypeEntity findOrCreateType(String normalizedType, Set<String> roles) {
+        return typeRepository.findByNameType(normalizedType)
+                .orElseGet(() -> {
+                    TypeEntity newType = TypeEntity.builder()
+                        .nameType(normalizedType)
+                        .roles(roles)
+                        .build();
+                    return typeRepository.save(newType);
+                });
+    }
+
     @Override
     public void updatePassword(String email, String password) {
-        var passEncoded = passwordEncoder.encode(password);
-        var user = userRepository.findByEmail(email);
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
 
-        try {
-            if (user.isEmpty()) {
-                throw new UserNotFoundException(email);
-            }
-
-            var userEntity = user.get();
-            userEntity.setPassword(passEncoded);
-            userRepository.save(userEntity);
-
-        } catch (UserNotFoundException e) {
-            throw new UserNotFoundException(email);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error updating user password", e);
-        }
-    }
-
-
-    private TypeEntity findOrCreateType(String formattedType, List<String> roles) {
-        return typeEntityRepositoryAdapter.findByNameType(formattedType)
-                .orElseGet(() -> createNewTypeIfNotExists(formattedType, roles));
-    }
-
-    private TypeEntity createNewTypeIfNotExists(String formattedType, List<String> roles) {
-
-        try {
-            return typeEntityRepositoryAdapter.save(new TypeEntity(null, formattedType, roles));
-        } catch (DataIntegrityViolationException e) {
-            return typeEntityRepositoryAdapter.findByNameType(formattedType)
-                    .orElseThrow(() -> new IllegalArgumentException("User type already exists."));
-        }
-
-
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        log.info("Password updated for user with email: {}", email);
     }
 }

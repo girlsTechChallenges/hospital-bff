@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.fiap.hospital.bff.core.inputport.ConsultCommandUseCase;
 import com.fiap.hospital.bff.core.inputport.ConsultQueryUseCase;
-import com.fiap.hospital.bff.infra.entrypoint.controller.docs.AuthControllerDocs;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserAuthDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserCredentialsDto;
+import com.fiap.hospital.bff.infra.entrypoint.docs.AuthControllerDocs;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserAuthRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserCredentialsRequestDto;
 import com.fiap.hospital.bff.infra.mapper.UserMapper;
 
 @RestController
@@ -31,17 +31,15 @@ public class AuthController implements AuthControllerDocs {
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserAuthDto> login(@Valid @RequestBody UserCredentialsDto loginRequest) {
+    public ResponseEntity<UserAuthRequestDto> login(@Valid @RequestBody UserCredentialsRequestDto loginRequest) {
         var response = consultQueryUseCase.validateLogin(loginRequest.email(), loginRequest.password());
-        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toTokenResponseDto(response));
+        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toAuthDto(response));
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<Void> updatePassword(@RequestBody UserCredentialsDto request) {
+    public ResponseEntity<Void> updatePassword(@RequestBody UserCredentialsRequestDto request) {
         log.info("UPDATE USER PASSWORD {}", request);
         consultCommandUseCase.updatePassword(request.email(), request.password());
         return ResponseEntity.noContent().build();
     }
-
-    
 }

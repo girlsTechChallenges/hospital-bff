@@ -6,7 +6,6 @@ import com.fiap.hospital.bff.core.domain.model.user.User;
 
 public interface SaveGateway {
 
-    //User    
     User save(User user);
 
     Type saveType(Type type);
