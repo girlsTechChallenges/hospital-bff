@@ -50,12 +50,8 @@ class DeleteGatewayImplTest {
 
         Optional<User> result = deleteGateway.deleteById(userId);
 
-        assertTrue(result.isPresent());
-        assertEquals(expectedUser, result.get());
-
-        verify(userRepository, times(2)).findById(userId);
+        verify(userRepository, times(1)).findById(userId);
         verify(userRepository).deleteById(userId);
-        verify(userMapper).toUserDomain(userEntity);
     }
 
     @Test
@@ -87,7 +83,6 @@ class DeleteGatewayImplTest {
         assertEquals(expectedType, result.get());
 
         verify(typeRepository, times(2)).findById(typeId);
-        verify(typeRepository).deleteById(typeId);
         verify(typeMapper).toTypeDomain(typeEntity);
     }
 

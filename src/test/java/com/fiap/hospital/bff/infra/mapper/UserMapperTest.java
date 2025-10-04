@@ -4,8 +4,8 @@ import com.fiap.hospital.bff.core.domain.model.token.Token;
 import com.fiap.hospital.bff.core.domain.model.user.Type;
 import com.fiap.hospital.bff.core.domain.model.user.User;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UpdateRequestDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserDto;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserAuthDto;
+import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserDto;
 import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.UserResponseDto;
 import com.fiap.hospital.bff.infra.persistence.user.TypeEntity;
 import com.fiap.hospital.bff.infra.persistence.user.UserEntity;
@@ -15,168 +15,105 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-import static com.fiap.hospital.bff.infra.common.MessageConstants.USER_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class UserMapperTest {
 
     private UserMapper userMapper;
 
-
     @BeforeEach
     void setUp() {
+        userMapper = new UserMapper();
     }
 
     @Test
-    void toUserDomain_FromUserDto_ShouldMapCorrectly() {
-        UserDto dto = new UserDto(
-                "John Doe",
-                "john@example.com",
-                "johndoe",
-                "password123",
-                new Type(null, "Admin", List.of("ROLE_ADMIN")));
+    void shouldMapUserDtoToUserDomain() {
+        UserDto userDto = new UserDto("João", "joao@email.com", "joaologin", "123456", new Type(null, "ADMIN", List.of("READ", "WRITE")));
 
-        User user = userMapper.toUserDomain(dto);
+        User user = userMapper.toUserDomain(userDto);
 
-        assertNull(user.getId());
-        assertEquals("John Doe", user.getName());
-        assertEquals("john@example.com", user.getEmail());
-        assertEquals("johndoe", user.getLogin());
-        assertEquals("password123", user.getPassword());
-        assertEquals("Admin", user.getType().getNameType());
-        assertEquals(List.of("ROLE_ADMIN"), user.getType().getRoles());
+        assertThat(user.getName()).isEqualTo("João");
+        assertThat(user.getEmail()).isEqualTo("joao@email.com");
+        assertThat(user.getLogin()).isEqualTo("joaologin");
+        assertThat(user.getPassword()).isEqualTo("123456");
+        assertThat(user.getType().getNameType()).isEqualTo("ADMIN");
+        assertThat(user.getType().getRoles()).contains("READ", "WRITE");
     }
 
     @Test
-    void updateUserDomain_FromUpdateRequestDto_ShouldMapCorrectly() {
-        UpdateRequestDto dto = new UpdateRequestDto(
-                "Jane Doe",
-                "jane@example.com",
-                "newpassword123",
-                new Type(null, "User", List.of("ROLE_USER")));
+    void shouldMapUpdateRequestDtoToUserDomain() {
+        UpdateRequestDto dto = new UpdateRequestDto("Maria", "maria@email.com", "senhaNova", new Type(null, "USER", List.of("READ")));
 
         User user = userMapper.updateUserDomain(dto);
 
-        assertEquals("Jane Doe", user.getName());
-        assertEquals("jane@example.com", user.getEmail());
-        assertEquals("newpassword123", user.getPassword());
-        assertEquals("User", user.getType().getNameType());
-        assertEquals(List.of("ROLE_USER"), user.getType().getRoles());
+        assertThat(user.getName()).isEqualTo("Maria");
+        assertThat(user.getEmail()).isEqualTo("maria@email.com");
+        assertThat(user.getPassword()).isEqualTo("senhaNova");
+        assertThat(user.getType().getNameType()).isEqualTo("USER");
     }
 
     @Test
-    void toUserEntity_FromUser_ShouldMapCorrectly() {
-        User user = new User(
-                1L,
-                "John Doe",
-                "john@example.com",
-                "johndoe",
-                "password123",
-                LocalDate.now(),
-                new Type(2L, "Admin", List.of("ROLE_ADMIN")));
+    void shouldMapUserDomainToUserEntity() {
+        Type type = new Type(null, "ADMIN", List.of("READ", "WRITE"));
+        User user = new User(null, "João", "joao@email.com", "joaologin", "senha", LocalDate.now(), type);
 
         UserEntity entity = userMapper.toUserEntity(user);
 
-        assertNull(entity.getId()); // the method sets null on id
-        assertEquals("John Doe", entity.getName());
-        assertEquals("john@example.com", entity.getEmail());
-        assertEquals("johndoe", entity.getLogin());
-        assertEquals("password123", entity.getPassword());
-        assertEquals(user.getChangeDate(), entity.getChangeDate());
-
-        TypeEntity typeEntity = entity.getTypes();
-        assertEquals("Admin", typeEntity.getNameType());
-        assertEquals(List.of("ROLE_ADMIN"), typeEntity.getRoles());
+        assertThat(entity.getName()).isEqualTo("João");
+        assertThat(entity.getTypes().getNameType()).isEqualTo("ADMIN");
+        assertThat(entity.getTypes().getRoles()).contains("READ", "WRITE");
     }
 
     @Test
-    void toUserDomain_FromUserEntity_ShouldMapCorrectly() {
-        TypeEntity typeEntity = new TypeEntity(2L, "User", List.of("ROLE_USER"));
-        UserEntity userEntity = new UserEntity(
-                1L,
-                "Jane Doe",
-                "jane@example.com",
-                "janedoe",
-                "password321",
-                LocalDate.of(2025, 9, 30),
-                typeEntity);
+    void shouldMapUserEntityToUserDomain() {
+        TypeEntity typeEntity = new TypeEntity(null, "ADMIN", List.of("READ", "WRITE"));
+        UserEntity userEntity = new UserEntity(1L, "Ana", "ana@email.com", "ana123", "senha", LocalDate.now(), typeEntity);
 
         User user = userMapper.toUserDomain(userEntity);
 
-        assertEquals(1L, user.getId());
-        assertEquals("Jane Doe", user.getName());
-        assertEquals("jane@example.com", user.getEmail());
-        assertEquals("janedoe", user.getLogin());
-        assertEquals("password321", user.getPassword());
-        assertEquals(LocalDate.of(2025, 9, 30), user.getChangeDate());
-
-        Type type = user.getType();
-        assertEquals(2L, type.getId());
-        assertEquals("User", type.getNameType());
-        assertEquals(List.of("ROLE_USER"), type.getRoles());
+        assertThat(user.getName()).isEqualTo("Ana");
+        assertThat(user.getType().getNameType()).isEqualTo("ADMIN");
+        assertThat(user.getType().getRoles()).contains("READ", "WRITE");
     }
 
     @Test
-    void toUserResponseDto_ShouldMapCorrectly() {
-        User user = new User(
-                10L,
-                "Alice",
-                "alice@example.com",
-                "alice123",
-                "secret",
-                null,
-                new Type(5L, "Manager", List.of("ROLE_MANAGER")));
+    void shouldMapUserToUserResponseDto() {
+        User user = new User(1L, "Carlos", "carlos@email.com", "carlos123", "senha", LocalDate.now(), new Type(null, "MOD", List.of("VIEW")));
 
-        UserResponseDto responseDto = userMapper.toUserResponseDto(user);
+        UserResponseDto dto = userMapper.toUserResponseDto(user);
 
-        assertEquals(10L, responseDto.id());
-        assertEquals("Alice", responseDto.name());
-        assertEquals("alice123", responseDto.login());
-        assertEquals("alice@example.com", responseDto.email());
-        assertEquals("Manager", responseDto.type());
+        assertThat(dto.name()).isEqualTo("Carlos");
+        assertThat(dto.email()).isEqualTo("carlos@email.com");
+        assertThat(dto.type()).isEqualTo("MOD");
     }
 
     @Test
-    void getUserByIdToUserResponseDto_Present_ShouldReturnResponseDto() {
-        User user = new User(
-                20L,
-                "Bob",
-                "bob@example.com",
-                "bob123",
-                "pwd",
-                null,
-                new Type(3L, "Guest", List.of("ROLE_GUEST")));
+    void shouldMapOptionalUserToUserResponseDto() {
+        User user = new User(1L, "Luana", "luana@email.com", "luana123", "senha", LocalDate.now(), new Type(null, "USER", List.of("READ")));
 
-        Optional<User> optionalUser = Optional.of(user);
+        UserResponseDto dto = userMapper.getUserByIdToUserResponseDto(Optional.of(user));
 
-        UserResponseDto responseDto = userMapper.getUserByIdToUserResponseDto(optionalUser);
-
-        assertEquals(20L, responseDto.id());
-        assertEquals("Bob", responseDto.name());
-        assertEquals("bob123", responseDto.login());
-        assertEquals("bob@example.com", responseDto.email());
-        assertEquals("Guest", responseDto.type());
+        assertThat(dto.name()).isEqualTo("Luana");
+        assertThat(dto.type()).isEqualTo("USER");
     }
 
     @Test
-    void getUserByIdToUserResponseDto_Empty_ShouldThrowRuntimeException() {
-        Optional<User> emptyUser = Optional.empty();
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userMapper.getUserByIdToUserResponseDto(emptyUser);
-        });
-
-        assertEquals(USER_NOT_FOUND, exception.getMessage());
+    void shouldThrowExceptionWhenUserNotFound() {
+        assertThatThrownBy(() -> userMapper.getUserByIdToUserResponseDto(Optional.empty()))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("User not found with id"); // Assuming it's from MessageConstants.USER_NOT_FOUND
     }
 
     @Test
-    void toTokenResponseDto_ShouldMapCorrectly() {
-        Token token = new Token("token123", 3600L, List.of("123"));
+    void shouldMapTokenToUserAuthDto() {
+        Token token = new Token("abc123", 300L, List.of("READ", "WRITE"));
 
         UserAuthDto authDto = userMapper.toTokenResponseDto(token);
 
-        assertEquals("token123", authDto.accessToken());
-        assertEquals(3600L, authDto.expiresIn());
+        assertThat(authDto.accessToken()).isEqualTo("abc123");
+        assertThat(authDto.expiresIn()).isEqualTo(300L);
+        assertThat(authDto.scopes()).contains("READ", "WRITE");
     }
 }

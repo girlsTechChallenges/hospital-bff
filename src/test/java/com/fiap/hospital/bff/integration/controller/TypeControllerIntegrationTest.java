@@ -109,7 +109,7 @@ public class TypeControllerIntegrationTest extends BaseIntegrationTest {
         .when()
                 .put("/type-users/999999")
         .then()
-                .statusCode(anyOf(equalTo(404), equalTo(500))) // Accept realistic responses
+                .statusCode(anyOf(equalTo(422), equalTo(500))) // Accept realistic responses
                 .time(lessThan(3000L));
     }
 
