@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserAuthDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.UserCredentialsDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserAuthRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserCredentialsRequestDto;
 import com.fiap.hospital.bff.infra.exception.ApiErrorMessage;
 
 @Tag(name = "Authentication", description = "API endpoints for user authentication")
@@ -19,7 +19,7 @@ public interface AuthControllerDocs {
     @Operation(summary = "Login", description = "Allows a user to authenticate by logging in with email and password")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Authenticated successfully", 
-                    content = @Content(schema = @Schema(implementation = UserAuthDto.class))),
+                    content = @Content(schema = @Schema(implementation = UserAuthRequestDto.class))),
             @ApiResponse(responseCode = "404", description = "User not found", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
             @ApiResponse(responseCode = "401", description = "Invalid email or password", 
@@ -27,7 +27,7 @@ public interface AuthControllerDocs {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
-    ResponseEntity<UserAuthDto> login(@Valid @RequestBody UserCredentialsDto loginRequest);
+    ResponseEntity<UserAuthRequestDto> login(@Valid @RequestBody UserCredentialsRequestDto loginRequest);
 
     @Operation(summary = "Change password", description = "Allows a user to change an already registered password")
     @ApiResponses(value = {
@@ -39,6 +39,6 @@ public interface AuthControllerDocs {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
-    ResponseEntity<Void> updatePassword(@RequestBody UserCredentialsDto request);
+    ResponseEntity<Void> updatePassword(@RequestBody UserCredentialsRequestDto request);
 }
 

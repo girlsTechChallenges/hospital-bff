@@ -15,7 +15,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Hospital BFF API")
+                        .title("Hospital API")
                         .version("1.0.0")
                         .description("API para gerenciamento do Hospital")
                         .contact(new Contact()

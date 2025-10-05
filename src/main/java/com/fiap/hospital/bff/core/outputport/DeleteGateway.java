@@ -6,7 +6,6 @@ import com.fiap.hospital.bff.core.domain.model.user.User;
 
 public interface DeleteGateway {
 
-    //User
        Optional<User> deleteById(Long idUser);
    
 }

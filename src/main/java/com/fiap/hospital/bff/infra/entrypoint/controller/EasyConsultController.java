@@ -9,62 +9,65 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import com.fiap.hospital.bff.infra.entrypoint.controller.docs.EasyConsultControllerDocs;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.ConsultDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.ConsultUpdateDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.ConsultResponseDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultUpdateRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.response.ConsultResponseDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.response.ConsultAggregatedDto;
+import com.fiap.hospital.bff.infra.adapter.easyconsult.EasyConsultService;
 
 @RestController
-@RequestMapping("/consults")
+@RequestMapping("/api/v1/consults")
 public class EasyConsultController implements EasyConsultControllerDocs {
 
-    private static final Logger log = LoggerFactory.getLogger(EasyConsultController.class);             
+    private static final Logger log = LoggerFactory.getLogger(EasyConsultController.class);
+
+    private final EasyConsultService easyConsultService;
+
+    public EasyConsultController(EasyConsultService easyConsultService) {
+        this.easyConsultService = easyConsultService;
+    }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultDto consultaRequest) {
-        log.info("POST CONSULT REQUEST: {} ", consultaRequest);
-        RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults";
-        ConsultResponseDto response = restTemplate.postForObject(externalUrl, consultaRequest, ConsultResponseDto.class);
+    public ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultRequestDto consultRequest) {
+        log.info("Creating new consult: {}", consultRequest);
+        var response = easyConsultService.createConsult(consultRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
      
     @GetMapping("/{id}")
     public ResponseEntity<ConsultResponseDto> getById(@PathVariable @NotNull Long id) {
-        log.info("GET CONSULT BY ID REQUEST {} ", id);
-        RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults/" + id;
-        var response = restTemplate.getForObject(externalUrl, ConsultResponseDto.class);
+        log.info("Fetching consult by ID: {}", id);
+        var response = easyConsultService.getConsultById(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<ConsultAggregatedDto> getByIdWithDetails(@PathVariable @NotNull Long id) {
+        log.info("Fetching consult with aggregated details for ID: {}", id);
+        var response = easyConsultService.getConsultWithDetails(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<ConsultResponseDto>> getByPatientId(@PathVariable @NotNull Long patientId) {
-        log.info("GET CONSULT BY PATIENT ID REQUEST {} ", patientId);
-        RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults/patient/" + patientId;
-        var response = restTemplate.getForObject(externalUrl, ConsultResponseDto[].class);
-        return ResponseEntity.ok(List.of(response));
+        log.info("Fetching consults for patient ID: {}", patientId);
+        var response = easyConsultService.getConsultsByPatient(patientId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ConsultResponseDto>> getAll() {
-        log.info("GET ALL CONSULTS REQUEST");
-        RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults/";
-        var response = restTemplate.getForObject(externalUrl, ConsultResponseDto[].class);
-        return ResponseEntity.ok(List.of(response));
+        log.info("Fetching all consults");
+        var response = easyConsultService.getAllConsults();
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity update(@NotNull Long id,
-            @Valid ConsultUpdateDto consultUpdateRequest) {
-        log.info("PUT CONSULT REQUEST {} ", consultUpdateRequest);
-        RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://kong:8000/consults/" + id;
-        restTemplate.put(externalUrl, consultUpdateRequest);
-        return ResponseEntity.ok().build();
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ConsultResponseDto> update(@PathVariable @NotNull Long id,
+                                                     @Valid @RequestBody ConsultUpdateRequestDto consultUpdateRequest) {
+        log.info("Updating consult ID {} with data: {}", id, consultUpdateRequest);
+        easyConsultService.updateConsult(id, consultUpdateRequest);
+        return ResponseEntity.noContent().build();
     }
-    
 }
