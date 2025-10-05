@@ -1,6 +1,6 @@
-# Hospital BFF
+# Hospital API
 
-Serviço Backend for Frontend (BFF) para o sistema de agendamento de consultas hospitalares.
+Sistema de API para gerenciamento de consultas hospitalares.
 
 ## 🛠️ Tecnologias
 
@@ -113,7 +113,7 @@ docker-compose down -v
 
 | Serviço | Porta Local | Porta Docker | Descrição |
 |---------|-------------|--------------|-----------|
-| Hospital BFF | 8080 | 8080 | API principal |
+| Hospital API | 8080 | 8080 | API principal |
 | PostgreSQL | 5432 | 5432 | Banco de dados |
 | Kong Gateway | 8000 | 8000 | API Gateway |
 | Kong Admin | 8001 | 8001 | Kong Admin API |
@@ -179,5 +179,3 @@ server.port=8081
 ```
 
 ---
-
-

@@ -12,9 +12,9 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.ConsultDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.request.ConsultUpdateDto;
-import com.fiap.hospital.bff.infra.entrypoint.controller.dto.response.ConsultResponseDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultUpdateRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.response.ConsultResponseDto;
 import com.fiap.hospital.bff.infra.exception.ApiErrorMessage;
 
 @Tag(name = "EasyConsult", description = "API endpoints for user consult registration and management")
@@ -23,7 +23,7 @@ public interface EasyConsultControllerDocs {
     @Operation(summary = "Create consult", description = "Allows a user to create a new consult")
       @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User registered successfully.", 
-                    content = @Content(schema = @Schema(implementation = ConsultDto.class))),
+                    content = @Content(schema = @Schema(implementation = ConsultRequestDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid field: mandatory criteria were not met.", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
             @ApiResponse(responseCode = "409", description = "User already registered.", 
@@ -31,12 +31,12 @@ public interface EasyConsultControllerDocs {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
-    ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultDto consultaRequest);
+    ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultRequestDto consultaRequest);
 
     @Operation(summary = "Get consult by ID", description = "Allows a user to retrieve a consult by ID")
         @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consult found successfully.", 
-                    content = @Content(schema = @Schema(implementation = ConsultDto.class))),
+                    content = @Content(schema = @Schema(implementation = ConsultRequestDto.class))),
             @ApiResponse(responseCode = "404", description = "Consult not found.", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", 
@@ -47,7 +47,7 @@ public interface EasyConsultControllerDocs {
     @Operation(summary = "Get all consults by patient ID", description = "Allows a user to retrieve all consults by patient ID")
         @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consults found successfully.", 
-                    content = @Content(schema = @Schema(implementation = ConsultDto.class))),
+                    content = @Content(schema = @Schema(implementation = ConsultRequestDto.class))),
             @ApiResponse(responseCode = "404", description = "Consults not found.", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", 
@@ -58,7 +58,7 @@ public interface EasyConsultControllerDocs {
     @Operation(summary = "Get all consults", description = "Retrieve a list of all registered consults.")
         @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consults retrieved successfully.", 
-                    content = @Content(schema = @Schema(implementation = ConsultDto.class))),
+                    content = @Content(schema = @Schema(implementation = ConsultRequestDto.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
@@ -67,7 +67,7 @@ public interface EasyConsultControllerDocs {
     @Operation(summary = "Update consult", description = "Update an existing consult.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consult updated successfully.", 
-                    content = @Content(schema = @Schema(implementation = ConsultDto.class))),
+                    content = @Content(schema = @Schema(implementation = ConsultRequestDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid field: mandatory criteria were not met.", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
             @ApiResponse(responseCode = "404", description = "User not found.", 
@@ -75,6 +75,6 @@ public interface EasyConsultControllerDocs {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
-    ResponseEntity<ConsultResponseDto> update(@PathVariable @NotNull Long id, @RequestBody @Valid ConsultUpdateDto consultUpdateRequest);
+    ResponseEntity<ConsultResponseDto> update(@PathVariable @NotNull Long id, @RequestBody @Valid ConsultUpdateRequestDto consultUpdateRequest);
 }
 
