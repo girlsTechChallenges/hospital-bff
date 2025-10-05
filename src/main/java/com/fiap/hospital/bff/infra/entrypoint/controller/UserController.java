@@ -1,6 +1,7 @@
 package com.fiap.hospital.bff.infra.entrypoint.controller;
 
 import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserUpdateRequestDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,7 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         log.info("Fetching all users");
@@ -62,6 +64,7 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
         log.info("Fetching user by ID: {}", id);
@@ -76,6 +79,7 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id,
                                                       @Valid @RequestBody UserUpdateRequestDto updateRequestDto) {
@@ -92,6 +96,7 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         log.info("Deleting user with ID: {}", id);

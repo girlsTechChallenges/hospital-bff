@@ -1,5 +1,6 @@
 package com.fiap.hospital.bff.infra.entrypoint.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -28,13 +29,15 @@ public class EasyConsultController implements EasyConsultControllerDocs {
         this.easyConsultService = easyConsultService;
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultRequestDto consultRequest) {
         log.info("Creating new consult: {}", consultRequest);
         var response = easyConsultService.createConsult(consultRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-     
+
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}")
     public ResponseEntity<ConsultResponseDto> getById(@PathVariable @NotNull Long id) {
         log.info("Fetching consult by ID: {}", id);
@@ -42,6 +45,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}/details")
     public ResponseEntity<ConsultAggregatedDto> getByIdWithDetails(@PathVariable @NotNull Long id) {
         log.info("Fetching consult with aggregated details for ID: {}", id);
@@ -49,6 +53,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<ConsultResponseDto>> getByPatientId(@PathVariable @NotNull Long patientId) {
         log.info("Fetching consults for patient ID: {}", patientId);
@@ -56,6 +61,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ConsultResponseDto>> getAll() {
         log.info("Fetching all consults");
@@ -63,6 +69,7 @@ public class EasyConsultController implements EasyConsultControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ConsultResponseDto> update(@PathVariable @NotNull Long id,
                                                      @Valid @RequestBody ConsultUpdateRequestDto consultUpdateRequest) {

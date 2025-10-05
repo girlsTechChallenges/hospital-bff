@@ -1,5 +1,6 @@
 package com.fiap.hospital.bff.infra.entrypoint.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class AuthController implements AuthControllerDocs {
         return ResponseEntity.status(HttpStatus.OK).body(userMapper.toTokenResponseDto(response));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PatchMapping("/password")
     public ResponseEntity<Void> updatePassword(@Valid @RequestBody UserCredentialsRequestDto request) {
         log.info("Password update request for email: {}", request.email());
