@@ -40,7 +40,8 @@ services:
       KONG_PG_PASSWORD: kong
       KONG_PG_DATABASE: kong
     depends_on:
-      - kong-db
+      kong-db:
+        condition: service_healthy
     networks:
       - kong-net
     restart: "no"
@@ -88,8 +89,6 @@ services:
     networks:
       - kong-net
     restart: on-failure
-    volumes:
-      - ./kong-db-data:/var/lib/postgresql/data
 
 networks:
   app-net:
