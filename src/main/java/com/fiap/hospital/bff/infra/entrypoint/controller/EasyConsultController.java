@@ -1,21 +1,22 @@
 package com.fiap.hospital.bff.infra.entrypoint.controller;
 
+import com.fiap.hospital.bff.infra.adapter.easyconsult.EasyConsultService;
+import com.fiap.hospital.bff.infra.entrypoint.controller.docs.EasyConsultControllerDocs;
+import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.ConsultFilterDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.GraphQLConsultationResponse;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.ConsultUpdateRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.ConsultDeleteRequestDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.fiap.hospital.bff.infra.entrypoint.controller.docs.EasyConsultControllerDocs;
-import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultRequestDto;
-import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultUpdateRequestDto;
-import com.fiap.hospital.bff.infra.entrypoint.dto.response.ConsultResponseDto;
-import com.fiap.hospital.bff.infra.entrypoint.dto.response.ConsultAggregatedDto;
-import com.fiap.hospital.bff.infra.adapter.easyconsult.EasyConsultService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/consults")
@@ -31,50 +32,50 @@ public class EasyConsultController implements EasyConsultControllerDocs {
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ConsultResponseDto> create(@Valid @RequestBody ConsultRequestDto consultRequest) {
+    public ResponseEntity<GraphQLConsultationResponse> create(@Valid @RequestBody ConsultRequestDto consultRequest) {
         log.info("Creating new consult: {}", consultRequest);
         var response = easyConsultService.createConsult(consultRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/{id}")
-    public ResponseEntity<ConsultResponseDto> getById(@PathVariable @NotNull Long id) {
-        log.info("Fetching consult by ID: {}", id);
-        var response = easyConsultService.getConsultById(id);
-        return ResponseEntity.ok(response);
-    }
-
-    @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/{id}/details")
-    public ResponseEntity<ConsultAggregatedDto> getByIdWithDetails(@PathVariable @NotNull Long id) {
-        log.info("Fetching consult with aggregated details for ID: {}", id);
-        var response = easyConsultService.getConsultWithDetails(id);
-        return ResponseEntity.ok(response);
-    }
-
-    @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<ConsultResponseDto>> getByPatientId(@PathVariable @NotNull Long patientId) {
-        log.info("Fetching consults for patient ID: {}", patientId);
-        var response = easyConsultService.getConsultsByPatient(patientId);
-        return ResponseEntity.ok(response);
-    }
-
-    @SecurityRequirement(name = "bearerAuth")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ConsultResponseDto>> getAll() {
+    public ResponseEntity<List<GraphQLConsultationResponse>> getAll() {
         log.info("Fetching all consults");
         var response = easyConsultService.getAllConsults();
         return ResponseEntity.ok(response);
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ConsultResponseDto> update(@PathVariable @NotNull Long id,
-                                                     @Valid @RequestBody ConsultUpdateRequestDto consultUpdateRequest) {
-        log.info("Updating consult ID {} with data: {}", id, consultUpdateRequest);
-        easyConsultService.updateConsult(id, consultUpdateRequest);
-        return ResponseEntity.noContent().build();
+    @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<GraphQLConsultationResponse>> getByFilter(
+            @RequestParam(required = false) String patientEmail,
+            @RequestParam(required = false) String professionalEmail,
+            @RequestParam(required = false) String localTime,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) String status) {
+
+        log.info("Fetching consults with filters");
+
+        ConsultFilterDto filter = new ConsultFilterDto(patientEmail, professionalEmail, localTime, date, status);
+        var response = easyConsultService.getConsultsByFilter(filter);
+        return ResponseEntity.ok(response);
     }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GraphQLConsultationResponse> update(@Valid @RequestBody ConsultUpdateRequestDto updateRequest) {
+        log.info("Updating consult: {}", updateRequest);
+        var response = easyConsultService.updateConsult(updateRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> delete(@Valid @RequestBody ConsultDeleteRequestDto deleteRequest) {
+        log.info("Deleting consult: {}", deleteRequest);
+        var response = easyConsultService.deleteConsult(deleteRequest);
+        return ResponseEntity.ok(response);
+    }
+
 }
