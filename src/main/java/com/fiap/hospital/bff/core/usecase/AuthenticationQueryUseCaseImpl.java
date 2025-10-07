@@ -53,7 +53,7 @@ public class AuthenticationQueryUseCaseImpl implements AuthenticationQueryUseCas
                 .issuer("HospitalAPI")
                 .subject(email)
                 .issuedAt(now)
-                .claim("scope", scope)
+                .claim("scope", scope.toLowerCase())
                 .expiresAt(now.plusSeconds(expiresIn))
                 .build();
 
