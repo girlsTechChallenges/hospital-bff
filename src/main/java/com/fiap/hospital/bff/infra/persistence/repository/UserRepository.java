@@ -1,9 +1,11 @@
 package com.fiap.hospital.bff.infra.persistence.repository;
 
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.TypeUsers;
 import com.fiap.hospital.bff.infra.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -12,4 +14,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByEmail(String email);
 
+    List<UserEntity> findAllByTipo(TypeUsers tipo);
 }

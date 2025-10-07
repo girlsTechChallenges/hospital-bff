@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 public class ExternalServiceException extends BusinessException {
 
     public ExternalServiceException(String message) {
-        super(message, HttpStatus.SERVICE_UNAVAILABLE);
+        super(message, HttpStatus.BAD_GATEWAY);
     }
 
-    public ExternalServiceException(String message, Throwable cause) {
-        super(message, cause, HttpStatus.SERVICE_UNAVAILABLE);
-    }
 }

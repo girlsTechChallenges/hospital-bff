@@ -1,30 +1,25 @@
 package com.fiap.hospital.bff.infra.entrypoint.dto.request;
 
-import jakarta.validation.constraints.*;
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record ConsultRequestDto(
-        @NotNull
-        @NotBlank
-        @Size(min = 2, max = 50)
-        @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ ]+$", message = "The name must contain only letters")
-        String patientName,
+
+        PatientData patient,
 
         @NotNull
-        @NotBlank
-        @Email
-        String patientEmail,
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        @Schema(example = "2023-12-31", description = "Data da consulta no formato yyyy-MM-dd")
+        String consultDate,
 
         @NotNull
-        @NotBlank
-        @Email
-        String profissionalEmail,
+        @JsonFormat(pattern = "HH:mm:ss")
+        @Schema(example = "21:00:00", description = "Hora da consulta no formato HH:mm:ss")
+        String consultTime,
 
-        @NotNull
-        @NotBlank
-        LocalDate consultDateTime,
-
-        @NotNull
         @NotBlank
         String consultReason
+
 ) {}
