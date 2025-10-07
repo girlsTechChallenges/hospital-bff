@@ -1,7 +1,7 @@
 package com.fiap.hospital.bff.infra.adapter.easyconsult;
 
 import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.ConsultFilterDto;
-import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.GraphQLConsultationResponse;
+import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.GraphQLConsultResponse;
 import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.ConsultUpdateRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.ConsultDeleteRequestDto;
@@ -31,7 +31,7 @@ public class EasyConsultService {
 
     private static final Logger log = LoggerFactory.getLogger(EasyConsultService.class);
 
-    private static final String CONSULTATION_FRAGMENT = """
+    private static final String CONSULT_FRAGMENT = """
             id
             patient {
                 name
@@ -40,7 +40,7 @@ public class EasyConsultService {
             nameProfessional
             localTime
             date
-            statusConsultation
+            statusConsult
             reason
         """;
 
@@ -53,90 +53,90 @@ public class EasyConsultService {
         this.graphqlUrl = graphqlUrl;
     }
 
-    public GraphQLConsultationResponse createConsult(ConsultRequestDto request) {
+    public GraphQLConsultResponse createConsult(ConsultRequestDto request) {
         log.info("Creating consult: {}", request);
 
         ProfessionalData professional = selectAvailableNurse();
 
         String mutation = """
-            mutation CreateConsultation($input: ConsultationRequestDto!) {
-                createFullConsultation(input: $input) {
+            mutation CreateFullConsult($input: ConsultRequestDto!) {
+                createFullConsult(input: $input) {
                     %s
                 }
             }
-            """.formatted(CONSULTATION_FRAGMENT);
+            """.formatted(CONSULT_FRAGMENT);
 
         Map<String, Object> variables = Map.of(
                 "input", buildCreateConsultInput(request, professional)
         );
 
-        return executeGraphQLMutation(mutation, variables, "createFullConsultation",
-                                    GraphQLConsultationResponse.class);
+        return executeGraphQLMutation(mutation, variables, "createFullConsult",
+                                    GraphQLConsultResponse.class);
     }
 
-    public List<GraphQLConsultationResponse> getAllConsults() {
+    public List<GraphQLConsultResponse> getAllConsults() {
         log.info("Fetching all consults");
 
         String query = """
             query {
-                getAllConsultations {
+                getAllConsults {
                     %s
                 }
             }
-            """.formatted(CONSULTATION_FRAGMENT);
+            """.formatted(CONSULT_FRAGMENT);
 
-        return executeGraphQLQuery(query, Map.of(), "getAllConsultations",
-                                 GraphQLConsultationResponse.class);
+        return executeGraphQLQuery(query, Map.of(), "getAllConsults",
+                                 GraphQLConsultResponse.class);
     }
 
-    public List<GraphQLConsultationResponse> getConsultsByFilter(ConsultFilterDto filter) {
+    public List<GraphQLConsultResponse> getConsultsByFilter(ConsultFilterDto filter) {
         log.info("Fetching consults with filter: {}", filter);
 
         String query = """
-            query GetFilteredConsultations($filter: ConsultationFilterRequestDto!) {
-                getFilteredConsultations(filter: $filter) {
+            query GetFilteredConsults($filter: ConsultFilterRequestDto!) {
+                getFilteredConsults(filter: $filter) {
                     %s
                 }
             }
-            """.formatted(CONSULTATION_FRAGMENT);
+            """.formatted(CONSULT_FRAGMENT);
 
         Map<String, Object> variables = Map.of("filter", buildFilterMap(filter));
 
-        return executeGraphQLQuery(query, variables, "getFilteredConsultations",
-                                 GraphQLConsultationResponse.class);
+        return executeGraphQLQuery(query, variables, "getFilteredConsults",
+                                 GraphQLConsultResponse.class);
     }
 
-    public GraphQLConsultationResponse updateConsult(ConsultUpdateRequestDto request) {
+    public GraphQLConsultResponse updateConsult(ConsultUpdateRequestDto request) {
         log.info("Updating consult: {}", request);
 
         String mutation = """
-            mutation UpdateConsultation($input: ConsultationUpdateRequestDto!) {
-                updateConsultation(input: $input) {
+            mutation UpdateConsult($input: ConsultUpdateRequestDto!) {
+                updateConsult(input: $input) {
                     %s
                 }
             }
-            """.formatted(CONSULTATION_FRAGMENT);
+            """.formatted(CONSULT_FRAGMENT);
 
         Map<String, Object> variables = Map.of(
                 "input", buildUpdateConsultInput(request)
         );
 
-        return executeGraphQLMutation(mutation, variables, "updateConsultation",
-                                    GraphQLConsultationResponse.class);
+        return executeGraphQLMutation(mutation, variables, "updateConsult",
+                                    GraphQLConsultResponse.class);
     }
 
     public Boolean deleteConsult(ConsultDeleteRequestDto request) {
         log.info("Deleting consult: {}", request);
 
         String mutation = """
-            mutation DeleteConsultation($id: ID!) {
-                deleteConsultation(id: $id)
+            mutation DeleteConsult($id: ID!) {
+                deleteConsult(id: $id)
             }
             """;
 
         Map<String, Object> variables = Map.of("id", request.id());
 
-        return executeGraphQLMutation(mutation, variables, "deleteConsultation", Boolean.class);
+        return executeGraphQLMutation(mutation, variables, "deleteConsult", Boolean.class);
     }
 
     private <T> T executeGraphQLMutation(String mutation, Map<String, Object> variables,

@@ -1,6 +1,6 @@
 package com.fiap.hospital.bff.infra.entrypoint.controller.docs;
 
-import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.GraphQLConsultationResponse;
+import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.GraphQLConsultResponse;
 import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.ConsultUpdateRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.dto.graphql.ConsultDeleteRequestDto;
@@ -33,7 +33,7 @@ public interface EasyConsultControllerDocs {
               @ApiResponse(responseCode = "502", description = "Bad Gateway",
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
-    ResponseEntity<GraphQLConsultationResponse> create(@Valid @RequestBody ConsultRequestDto consultaRequest);
+    ResponseEntity<GraphQLConsultResponse> create(@Valid @RequestBody ConsultRequestDto consultaRequest);
 
     @Operation(summary = "Get all consults", description = "Retrieve a list of all registered consults.")
         @ApiResponses(value = {
@@ -46,12 +46,12 @@ public interface EasyConsultControllerDocs {
                 @ApiResponse(responseCode = "502", description = "Bad Gateway",
                         content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
-    ResponseEntity<List<GraphQLConsultationResponse>> getAll();
+    ResponseEntity<List<GraphQLConsultResponse>> getAll();
 
     @Operation(summary = "Get consults by filter", description = "Retrieve consults filtered by patient email, professional email, local time, date, and status")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consults retrieved successfully.",
-                content = @Content(schema = @Schema(implementation = GraphQLConsultationResponse.class))),
+                content = @Content(schema = @Schema(implementation = GraphQLConsultResponse.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized.",
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error.",
@@ -59,7 +59,7 @@ public interface EasyConsultControllerDocs {
             @ApiResponse(responseCode = "502", description = "Bad Gateway",
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
-    ResponseEntity<List<GraphQLConsultationResponse>> getByFilter(
+    ResponseEntity<List<GraphQLConsultResponse>> getByFilter(
             @Parameter(description = "Patient email filter") @RequestParam(required = false) String patientEmail,
             @Parameter(description = "Professional email filter") @RequestParam(required = false) String professionalEmail,
             @Parameter(description = "Local time filter") @RequestParam(required = false) String localTime,
@@ -69,7 +69,7 @@ public interface EasyConsultControllerDocs {
     @Operation(summary = "Update consult", description = "Update an existing consult")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consult updated successfully.",
-                content = @Content(schema = @Schema(implementation = GraphQLConsultationResponse.class))),
+                content = @Content(schema = @Schema(implementation = GraphQLConsultResponse.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized.",
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))),
             @ApiResponse(responseCode = "404", description = "Consult not found.",
@@ -79,7 +79,7 @@ public interface EasyConsultControllerDocs {
             @ApiResponse(responseCode = "502", description = "Bad Gateway",
                     content = @Content(schema = @Schema(implementation = ApiErrorMessage.class)))
     })
-    ResponseEntity<GraphQLConsultationResponse> update(@Valid @RequestBody ConsultUpdateRequestDto updateRequest);
+    ResponseEntity<GraphQLConsultResponse> update(@Valid @RequestBody ConsultUpdateRequestDto updateRequest);
 
     @Operation(summary = "Delete consult", description = "Delete an existing consult")
     @ApiResponses(value = {

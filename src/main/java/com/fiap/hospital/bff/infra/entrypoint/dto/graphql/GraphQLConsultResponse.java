@@ -3,7 +3,7 @@ package com.fiap.hospital.bff.infra.entrypoint.dto.graphql;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record GraphQLConsultationResponse(
+public record GraphQLConsultResponse(
         String id,
         PatientResponse patient,
         String nameProfessional,
