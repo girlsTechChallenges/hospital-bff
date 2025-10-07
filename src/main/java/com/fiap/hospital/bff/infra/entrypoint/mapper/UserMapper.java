@@ -15,16 +15,18 @@ public class UserMapper {
 
     public User toUserDomain(UserRequestDto userRequestDto) {
         return new User(
+                null,
                 userRequestDto.nome(),
                 userRequestDto.email(),
                 userRequestDto.login(),
                 userRequestDto.senha(),
-                userRequestDto.tipo().name()
+                userRequestDto.tipo()
         );
     }
 
     public User toUserDomainUpdate(UserUpdateRequestDto updateRequestDto) {
         return new User(
+                null,
                 null,
                 updateRequestDto.email(),
                 updateRequestDto.login(),
@@ -39,23 +41,24 @@ public class UserMapper {
                 .email(user.getEmail())
                 .login(user.getLogin())
                 .senha(user.getSenha())
-                .tipo(TypeUsers.valueOf(user.getTipo()))
+                .tipo(user.getTipo())
                 .build();
     }
 
     public User toUserDomain(UserEntity userEntity) {
         return new User(
+                userEntity.getId(),
                 userEntity.getNome(),
                 userEntity.getEmail(),
                 userEntity.getLogin(),
                 userEntity.getSenha(),
-                userEntity.getTipo().name()
+                userEntity.getTipo()
         );
     }
 
     public UserResponseDto toUserResponseDto(User user) {
         return new UserResponseDto(
-                null,
+                user.getId(),
                 user.getNome(),
                 user.getEmail(),
                 user.getLogin(),

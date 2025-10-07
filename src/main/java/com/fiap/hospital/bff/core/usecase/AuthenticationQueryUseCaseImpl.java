@@ -47,7 +47,7 @@ public class AuthenticationQueryUseCaseImpl implements AuthenticationQueryUseCas
     private Token generateToken(String email, User user) {
         var now = Instant.now();
         var expiresIn = 300L;
-        var scope = user.getTipo();
+        var scope = user.getTipo().toString();
 
         var claims = JwtClaimsSet.builder()
                 .issuer("HospitalAPI")
