@@ -1,0 +1,379 @@
+{
+	"info": {
+		"_postman_id": "09ee9810-c162-45a8-b481-c279f370643f",
+		"name": "BFF - HOSPITAL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "45505477",
+		"_collection_link": "https://agathadev-5136041.postman.co/workspace/agathadev's-Workspace~7c6f6e5c-91cb-48a4-8637-215ee93f700a/collection/45505477-09ee9810-c162-45a8-b481-c279f370643f?action=share&source=collection_link&creator=45505477"
+	},
+	"item": [
+		{
+			"name": "USER",
+			"item": [
+				{
+					"name": "CREATE USER",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Profissional Enfermeiro\",\n  \"email\": \"enfermeiro@email.com\",\n  \"login\": \"enfermeiro\",\n  \"senha\": \"password\",\n  \"tipo\": \"ENFERMEIRO\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/users"
+					},
+					"response": []
+				},
+				{
+					"name": "GET USER ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6Imx1YW5hQGVtYWlsLmNvbSIsImV4cCI6MTc1OTY5MzA4MiwiaWF0IjoxNzU5NjkyNzgyLCJzY29wZSI6Ik1FRElDTyJ9.unPCE63yWaYZgLriZcuzVoE7lQ5hd3fdQ86_ezj_zjfrSlorNzvb0cPY_MHHRjBq3wYuvOcBv0Uxer3Hz5FRBJzQW_oZP-W5cjZAMUhgWe69CsJZiGSO_qjOErrHGNyzX9i9QnHr3PmFyPu5CxZJg-Q9GUJloacrIcsu2PsN2tFnvguvOT_UEUVsPutv5wmc2qqNmiSjxEBAoTzD7nTtso-1VJWY4L_a7pVCtHzTNevuux_qY7qydxDZVTwwxvdXTli7aDkKZRj8reEX5P9LlsZ8XKFBXcujvWLBpCGie8kq4bhAaRNaBRpc4eoITFySYIfIqFeXJMA7t48-fTfqEQ"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "http://localhost:8080/api/v1/users/4"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE USER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6Imx1YW5hQGVtYWlsLmNvbSIsImV4cCI6MTc1OTY5MzA4MiwiaWF0IjoxNzU5NjkyNzgyLCJzY29wZSI6Ik1FRElDTyJ9.unPCE63yWaYZgLriZcuzVoE7lQ5hd3fdQ86_ezj_zjfrSlorNzvb0cPY_MHHRjBq3wYuvOcBv0Uxer3Hz5FRBJzQW_oZP-W5cjZAMUhgWe69CsJZiGSO_qjOErrHGNyzX9i9QnHr3PmFyPu5CxZJg-Q9GUJloacrIcsu2PsN2tFnvguvOT_UEUVsPutv5wmc2qqNmiSjxEBAoTzD7nTtso-1VJWY4L_a7pVCtHzTNevuux_qY7qydxDZVTwwxvdXTli7aDkKZRj8reEX5P9LlsZ8XKFBXcujvWLBpCGie8kq4bhAaRNaBRpc4eoITFySYIfIqFeXJMA7t48-fTfqEQ"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"agatha@email.com\",\n  \"login\": \"agathapaiva\",\n  \"senha\": \"novaSenha\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/users/4"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE USER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6Imx1YW5hQGVtYWlsLmNvbSIsImV4cCI6MTc1OTY5MzA4MiwiaWF0IjoxNzU5NjkyNzgyLCJzY29wZSI6Ik1FRElDTyJ9.unPCE63yWaYZgLriZcuzVoE7lQ5hd3fdQ86_ezj_zjfrSlorNzvb0cPY_MHHRjBq3wYuvOcBv0Uxer3Hz5FRBJzQW_oZP-W5cjZAMUhgWe69CsJZiGSO_qjOErrHGNyzX9i9QnHr3PmFyPu5CxZJg-Q9GUJloacrIcsu2PsN2tFnvguvOT_UEUVsPutv5wmc2qqNmiSjxEBAoTzD7nTtso-1VJWY4L_a7pVCtHzTNevuux_qY7qydxDZVTwwxvdXTli7aDkKZRj8reEX5P9LlsZ8XKFBXcujvWLBpCGie8kq4bhAaRNaBRpc4eoITFySYIfIqFeXJMA7t48-fTfqEQ"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": "http://localhost:8080/api/v1/users/4"
+					},
+					"response": []
+				},
+				{
+					"name": "GET ALL",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6ImFnYXRoYUBlbWFpbC5jb20iLCJleHAiOjE3NTk3MjUwMDIsImlhdCI6MTc1OTcyNDcwMiwic2NvcGUiOiJlbmZlcm1laXJvIn0.ZBbPrEDXURbpLoVytwj3rC3tHV79_299xKxs4Npd8WHKm4kAL--5KchH3WvDZbO7H4SG693AwcyVK1LK9HxesrCWpVoM-ZoainH_6RqtMT-xtgQxszps7-yAjAyUxZXtN0_7kQVJm5osbU4aecJLv1S44vXWCc9Fw2f4FRoJn71kwyuLnyI-etZtnNBCIBzEgIK6qc737ZvM_aylHX2icbgJOXxqEE08rhjl-rAK7Gdb91VTEO70-4VInVllOB_NsDdQQcGb96NxQoSyrA0_2r8ZBUvG4o3qzdHtJm1D_Q4YT3gRYg2769upT2_v8ex51F1q51NaE8ZmqQF1qfEPhA"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "http://localhost:8080/api/v1/users"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "LOGIN USER",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"medico@email.com\",\n  \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "PASSWORD",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6Imx1YW5hQGVtYWlsLmNvbSIsImV4cCI6MTc1OTY5MzA4MiwiaWF0IjoxNzU5NjkyNzgyLCJzY29wZSI6Ik1FRElDTyJ9.unPCE63yWaYZgLriZcuzVoE7lQ5hd3fdQ86_ezj_zjfrSlorNzvb0cPY_MHHRjBq3wYuvOcBv0Uxer3Hz5FRBJzQW_oZP-W5cjZAMUhgWe69CsJZiGSO_qjOErrHGNyzX9i9QnHr3PmFyPu5CxZJg-Q9GUJloacrIcsu2PsN2tFnvguvOT_UEUVsPutv5wmc2qqNmiSjxEBAoTzD7nTtso-1VJWY4L_a7pVCtHzTNevuux_qY7qydxDZVTwwxvdXTli7aDkKZRj8reEX5P9LlsZ8XKFBXcujvWLBpCGie8kq4bhAaRNaBRpc4eoITFySYIfIqFeXJMA7t48-fTfqEQ"
+							}
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"luana@email.com\",\n  \"password\": \"novaSenha123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/auth/password"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CONSULT",
+			"item": [
+				{
+					"name": "CREATE CONSULT",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6ImVuZmVybWVpcm9AZW1haWwuY29tIiwiZXhwIjoxNzU5ODc4NjQxLCJpYXQiOjE3NTk4NzgzNDEsInNjb3BlIjoiZW5mZXJtZWlybyJ9.h8eRwPp7_h74jt15JxPw6GhVWQvXZ1nxsiNIEyQgdiHfDhOIRRxP7OcZC9AIDX2sPR0178IoiCDKV4ywHpHWaJcgvK2IwK9DMOgooSow7ekgPJM0NkSrdyrciUiYSHNj9WCNqeV5xwkuUxXgeZZb9ijYO1WSNRxUfyB2lf7tA4pbKq4gRcUHqCjycJ-pLJo5gQc-t_X3d4HGSZdsa9BV7Ysh-jpgz7W984v8bOgAiqf2ybD7WZh-zWLRpzWroXDtxadL4oI0ggMkacxAsMYf6nR-CbAqFuqtA8q_PipDMid-jp0DGC8SHx4oHbqn3r1rVWeAn4o4gJtFrrphDltjfw"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patient\": {\n    \"name\": \"Nome Paciente\",\n    \"email\": \"paciente@email.com\"\n  },\n  \"consultDate\": \"2025-10-15\",\n  \"consultTime\": \"21:00:00\",\n  \"consultReason\": \"consulta de rotina.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/consults"
+					},
+					"response": []
+				},
+				{
+					"name": "GET ALL CONSULT",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6ImVuZmVybWVpcm9AZW1haWwuY29tIiwiZXhwIjoxNzU5ODc4NDk3LCJpYXQiOjE3NTk4NzgxOTcsInNjb3BlIjoiZW5mZXJtZWlybyJ9.aR1UfVj8LdEfHXwxXBzh3aUFQhQhFXtFW3Y9uCmMFF-CINIa3KWmmkyJSTkJzAEIIYKisgdACQW0f4ijNYJM8ROT19_ULrvMRYawjv7DK7Wli8cSy6CuAexUwNuTJV-gzqulejrpmhIhpDpt_xy3liUUDNX_QvhSzXLwhu7op0Sbdha3wkL-byhTLaP-fnwRhpAXO15UpTQhgP1puhA5bAGa5ZL0jVcVgmaGDqe4W9LMABbI_N_g_Uo55TO17mToQbTCjrDgvAgOrRNUzUTn3BiNGdixgpM4IRFmBknFhNQNzjWuTkx_T820UnapniM0FzfF2FzOiNqBuAihzCKEyw"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "http://localhost:8080/api/v1/consults"
+					},
+					"response": []
+				},
+				{
+					"name": "FILTER CONSULT",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6ImFnYXRoYUBlbWFpbC5jb20iLCJleHAiOjE3NTk3MjgwNzgsImlhdCI6MTc1OTcyNzc3OCwic2NvcGUiOiJlbmZlcm1laXJvIn0.lNiCh9vVG03QaxRBNmao9IakUToCWeJx5-zlAp_ysCoMMgONxwegxT5vk9jWOrhI_Ol5_tH7qrgqu9jjUDLz-1Q7qYJe6yn9c5jbjy7Nq1mSGG4HzdW2iL3FlOHcQGqdZim6F0fj01AnuOey0XArLgPHcRERuh3b1imzkfN4_GjWd45GH9arfHTZW_C-lEgDrRBYRxRQ3d2Iwovu7tPSTskuiKe-W5iwndLcCqazjZ3fxucGKMkQabagSYm3dcALsN2RReIOlTizCg5W7xFMwyQNIIK0JOKONnACibp_0d8gfc474qMxVMdAOnPvAOnTebTXbARqmL4sT0Gn02mmLw"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/consults/filter?status=CANCELLED",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"consults",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "patientEmail",
+									"value": "paciente@email.com",
+									"disabled": true
+								},
+								{
+									"key": "professionalEmail",
+									"value": "medico@email.com.br",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2025-10-18",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "CANCELLED"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE CONSULT",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6ImFnYXRoYUBlbWFpbC5jb20iLCJleHAiOjE3NTk3MjgwNzgsImlhdCI6MTc1OTcyNzc3OCwic2NvcGUiOiJlbmZlcm1laXJvIn0.lNiCh9vVG03QaxRBNmao9IakUToCWeJx5-zlAp_ysCoMMgONxwegxT5vk9jWOrhI_Ol5_tH7qrgqu9jjUDLz-1Q7qYJe6yn9c5jbjy7Nq1mSGG4HzdW2iL3FlOHcQGqdZim6F0fj01AnuOey0XArLgPHcRERuh3b1imzkfN4_GjWd45GH9arfHTZW_C-lEgDrRBYRxRQ3d2Iwovu7tPSTskuiKe-W5iwndLcCqazjZ3fxucGKMkQabagSYm3dcALsN2RReIOlTizCg5W7xFMwyQNIIK0JOKONnACibp_0d8gfc474qMxVMdAOnPvAOnTebTXbARqmL4sT0Gn02mmLw"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"3\",\n  \"reason\": \"Consulta cancelada por conflito de agenda.\",\n  \"status\": \"CANCELLED\",\n  \"date\": \"2025-10-18\",\n  \"localTime\": \"17:00:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/consults"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE CONSULT",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJIb3NwaXRhbEFQSSIsInN1YiI6ImFnYXRoYUBlbWFpbC5jb20iLCJleHAiOjE3NTk3MjgwNzgsImlhdCI6MTc1OTcyNzc3OCwic2NvcGUiOiJlbmZlcm1laXJvIn0.lNiCh9vVG03QaxRBNmao9IakUToCWeJx5-zlAp_ysCoMMgONxwegxT5vk9jWOrhI_Ol5_tH7qrgqu9jjUDLz-1Q7qYJe6yn9c5jbjy7Nq1mSGG4HzdW2iL3FlOHcQGqdZim6F0fj01AnuOey0XArLgPHcRERuh3b1imzkfN4_GjWd45GH9arfHTZW_C-lEgDrRBYRxRQ3d2Iwovu7tPSTskuiKe-W5iwndLcCqazjZ3fxucGKMkQabagSYm3dcALsN2RReIOlTizCg5W7xFMwyQNIIK0JOKONnACibp_0d8gfc474qMxVMdAOnPvAOnTebTXbARqmL4sT0Gn02mmLw"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/consults"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
