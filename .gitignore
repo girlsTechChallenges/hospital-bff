@@ -34,5 +34,6 @@ build/
 .devcontainer/
 *.log
 
-# Kong database data
-kong-db-data/
+# Temporary Kong files
+kong-config/tmp_volume/*
+kong-config/prefix_volume/*

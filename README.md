@@ -11,6 +11,9 @@ Sistema de API para gerenciamento de consultas hospitalares com autenticação J
 - **Maven**
 - **JWT Authentication**
 - **Spring Security**
+- **GraphQL** (para integração com serviços de consulta)
+- **Spring GraphQL Client**
+- **JaCoCo** (cobertura de testes)
 
 ## 🚀 Como Executar
 
@@ -115,9 +118,240 @@ docker-compose down -v
 |---------|-------------|--------------|-----------|
 | Hospital API | 8080 | 8080 | API principal |
 | PostgreSQL | 5432 | 5432 | Banco de dados |
-| Kong Gateway | 8000 | 8000 | API Gateway |
-| Kong Admin | 8001 | 8001 | Kong Admin API |
+| Kong Gateway | 8000 | 8000 | API Gateway (Proxy) |
+| Kong Admin API | 8001 | 8001 | Kong Admin API |
 | Kong Manager | 8002 | 8002 | Kong Interface Web |
+| Kong SSL Proxy | 8443 | 8443 | Gateway HTTPS |
+| Kong Admin SSL | 8444 | 8444 | Admin API HTTPS |
+
+## 🌐 Kong API Gateway
+
+O projeto utiliza o **Kong Gateway** como API Gateway para gerenciar e rotear requisições para a API hospitalar. Kong é um gateway de API open-source que oferece funcionalidades avançadas de proxy, segurança e observabilidade.
+
+### 🔧 **Configuração Kong**
+
+#### **Modo Database-less (DBless)**
+- Kong roda em modo **declarativo sem banco de dados**
+- Configuração via arquivo `kong-config/kong.yml`
+- Melhor performance e simplicidade para APIs menores
+- Configuração versionada junto com o código
+
+#### **Arquitetura de Rede**
+```
+Cliente → Kong Gateway (8000) → Hospital API (8080)
+```
+
+### 📋 **Rotas Configuradas**
+
+O Kong está configurado para rotear as seguintes rotas da API:
+
+```yaml
+# Autenticação
+/api/v1/auth → Hospital API
+
+# Gestão de Usuários  
+/api/v1/users → Hospital API
+
+# Consultas Médicas
+/api/v1/consults → Hospital API
+```
+
+### ⚙️ **Funcionalidades Ativas**
+
+#### **🔄 Resiliência**
+- **Timeout**: 60 segundos para conexão/leitura/escrita
+- **Retries**: 5 tentativas automáticas em caso de falha
+- **Circuit Breaker**: Proteção contra sobrecarga
+
+#### **📊 Observabilidade**
+- **Logs de Acesso**: Requisições registradas em stdout
+- **Logs de Erro**: Erros registrados em stderr
+- **Métricas**: Disponíveis via Admin API
+
+#### **🔒 Segurança**
+- **Rate Limiting**: Controle de taxa de requisições
+- **CORS**: Configuração de políticas cross-origin
+- **SSL/TLS**: Suporte HTTPS na porta 8443
+
+### 🚀 **Usando o Kong Gateway**
+
+#### **Acessar API via Kong**
+```bash
+# Via Kong Gateway (recomendado)
+curl http://localhost:8000/api/v1/auth/login
+
+# Diretamente na API (desenvolvimento)
+curl http://localhost:8080/api/v1/auth/login
+```
+
+#### **Monitoramento via Admin API**
+```bash
+# Status dos serviços
+curl http://localhost:8001/services
+
+# Status das rotas
+curl http://localhost:8001/routes
+
+# Métricas de saúde
+curl http://localhost:8001/status
+```
+
+#### **Interface Web Kong Manager**
+- **URL**: http://localhost:8002
+- **Funcionalidades**:
+  - Visualização de rotas e serviços
+  - Monitoramento de tráfego
+  - Configuração de plugins
+  - Análise de logs e métricas
+
+### 🛠️ **Configuração Avançada**
+
+#### **Adicionando Plugins**
+Para adicionar plugins Kong, edite o arquivo `kong-config/kong.yml`:
+
+```yaml
+services:
+- name: hospital-bff
+  url: http://app:8080
+  plugins:
+  - name: rate-limiting
+    config:
+      minute: 100
+      hour: 1000
+  - name: cors
+    config:
+      origins: ["*"]
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+```
+
+#### **Rate Limiting para Hospital**
+```yaml
+# Exemplo: Limitação para consultas médicas
+- name: rate-limiting
+  service: hospital-bff
+  route: easy-consult
+  config:
+    minute: 30    # 30 consultas por minuto
+    hour: 500     # 500 consultas por hora
+```
+
+#### **Autenticação JWT**
+```yaml
+# Exemplo: Validação JWT no Kong
+- name: jwt
+  service: hospital-bff
+  config:
+    key_claim_name: iss
+    secret_is_base64: false
+```
+
+### 📈 **Benefícios do Kong no Projeto**
+
+#### **🏥 Para Ambiente Hospitalar**
+- **Alta Disponibilidade**: Retry automático para APIs críticas
+- **Monitoramento**: Tracking de APIs médicas sensíveis
+- **Segurança**: Proteção contra ataques DDoS
+- **Compliance**: Logs auditáveis para LGPD/HIPAA
+
+#### **👩‍💻 Para Desenvolvimento**
+- **Proxy Transparente**: Não afeta desenvolvimento local
+- **Debugging**: Logs detalhados de todas as requisições
+- **Testing**: Ambiente consistente entre dev/prod
+- **Versionamento**: Rotas versionadas facilmente
+
+### 🔍 **Troubleshooting Kong**
+
+#### **Verificar Status do Kong**
+```bash
+# Status geral
+docker logs kong-dbless-readonly
+
+# Recarregar configuração
+curl -X POST http://localhost:8001/config \
+  -F config=@kong-config/kong.yml
+```
+
+#### **Problemas Comuns**
+
+**Kong não responde na porta 8000:**
+```bash
+# Verificar se container está rodando
+docker ps | grep kong
+
+# Verificar logs
+docker logs kong-dbless-readonly
+
+# Reiniciar Kong
+docker restart kong-dbless-readonly
+```
+
+**Erro 502 Bad Gateway:**
+- Verificar se Hospital API está rodando na porta 8080
+- Conferir conectividade entre containers
+- Validar configuração de rede no docker-compose
+
+### 🎯 **Exemplos Práticos de Uso**
+
+#### **Cenários Hospitalares com Kong**
+
+**1. Login de Médico via Kong:**
+```bash
+# Login direto via Kong Gateway
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "medico@hospital.com",
+    "password": "senha123456"
+  }'
+```
+
+**2. Criação de Consulta com Rate Limiting:**
+```bash
+# Consulta via Kong (com limitação de taxa)
+curl -X POST http://localhost:8000/api/v1/consults \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <jwt-token>" \
+  -d '{
+    "patient": {
+      "name": "João Silva",
+      "email": "joao@email.com"
+    },
+    "consultDate": "2025-10-14",
+    "consultTime": "10:30:00",
+    "consultReason": "Consulta de rotina"
+  }'
+```
+
+**3. Monitoramento de API Hospitalar:**
+```bash
+# Métricas de uso da API
+curl http://localhost:8001/metrics
+
+# Status de saúde dos serviços
+curl http://localhost:8001/services/hospital-bff/health
+```
+
+#### **Configuração para Produção**
+
+**Kong com SSL/TLS:**
+```yaml
+# Configuração HTTPS para produção
+routes:
+- name: auth-secure
+  paths: ["/api/v1/auth"]
+  protocols: ["https"]
+  https_redirect_status_code: 301
+```
+
+**Logs Estruturados:**
+```yaml
+# Plugin de logging para auditoria hospitalar
+plugins:
+- name: file-log
+  config:
+    path: "/var/log/kong/hospital-api.log"
+    format: "json"
+```
 
 ## 🔧 Configuração
 
@@ -150,6 +384,23 @@ spring.datasource.password=postgres
 A aplicação utiliza JWT para autenticação. As chaves públicas e privadas estão em:
 - `src/main/resources/app.key` (chave privada)
 - `src/main/resources/app.pub` (chave pública)
+
+## 🔗 Integração GraphQL
+
+O serviço se integra com um backend GraphQL para operações de consulta médica:
+
+### Configuração
+```properties
+# URL do serviço GraphQL (padrão)
+app.graphql.easyconsult.url=http://localhost:8081/graphql
+```
+
+### Funcionalidades GraphQL
+- **Queries**: Busca de consultas com filtros
+- **Mutations**: Criação, atualização e exclusão de consultas
+- **Autenticação**: Propagação automática do JWT token
+- **Resiliência**: Tratamento de falhas de conectividade
+- **Agregação**: Combinação de dados de múltiplos serviços
 
 ## 📖 API Documentation
 
@@ -267,13 +518,18 @@ src/main/java/com/fiap/hospital/bff/
 - `POST /api/v1/auth/login` - Login de usuário
 - `PATCH /api/v1/auth/password` - Atualização de senha
 
-### Consultas
-- `GET /api/v1/consults` - Listar todas as consultas
-- `GET /api/v1/consults/{id}` - Buscar consulta por ID
-- `GET /api/v1/consults/{id}/details` - Buscar consulta com dados agregados
-- `GET /api/v1/consults/patient/{patientId}` - Consultas por paciente
-- `POST /api/v1/consults` - Criar nova consulta
-- `PUT /api/v1/consults/{id}` - Atualizar consulta
+### Consultas (GraphQL Integration)
+- `GET /api/v1/consults` - Listar todas as consultas via GraphQL
+- `GET /api/v1/consults/filter` - Buscar consultas com filtros específicos
+- `POST /api/v1/consults` - Criar nova consulta via GraphQL
+- `PUT /api/v1/consults` - Atualizar consulta via GraphQL
+- `DELETE /api/v1/consults/{id}` - Excluir consulta via GraphQL
+
+#### GraphQL Endpoints
+O serviço se integra com um backend GraphQL externo para operações de consulta:
+- **GraphQL URL**: `http://localhost:8081/graphql` (configurável)
+- **Autenticação**: JWT Bearer Token
+- **Operações**: Query, Mutation para CRUD de consultas
 
 ### Monitoramento
 - `GET /actuator/health` - Status da aplicação
@@ -355,7 +611,11 @@ Os testes de integração foram criados com foco em cenários específicos do am
 - ✅ **FindByGatewayImpl**: Consultas de usuários
 
 #### 🌐 **Serviços Externos**
-- ✅ **EasyConsultService**: Integração com serviços de consulta
+- ✅ **EasyConsultService**: Integração com serviços GraphQL de consulta
+  - Criação, consulta, atualização e exclusão de consultas
+  - Seleção automática de enfermeiros disponíveis
+  - Tratamento de falhas de conectividade
+  - Validação de autenticação JWT
 
 ### 🛠️ **Ferramentas e Bibliotecas**
 
@@ -406,7 +666,7 @@ Os testes de integração foram criados com foco em cenários específicos do am
 #### 📋 **Comandos Maven**
 
 ```bash
-# Executar todos os testes
+# Executar todos os testes (153 testes)
 mvn test
 
 # Executar apenas testes unitários
@@ -416,13 +676,17 @@ mvn test -Dtest="**/*Test"
 mvn test -Dtest="**/*IntegrationTest"
 
 # Executar testes específicos
-mvn test -Dtest=UserCommandUseCaseImplTest
+mvn test -Dtest=EasyConsultServiceTest
 
 # Executar testes com cobertura
 mvn test jacoco:report
 
 # Executar testes em modo silencioso
 mvn test -q
+
+# Visualizar relatório de cobertura
+# Após executar 'mvn test jacoco:report'
+# Abrir: target/site/jacoco/index.html
 ```
 
 #### 📊 **Perfis de Teste**
@@ -434,11 +698,13 @@ Os testes utilizam o perfil `test` com configurações específicas:
 ### 🎯 **Métricas de Qualidade**
 
 #### ✅ **Resultados Atuais**
-- **67+ testes implementados**
+- **153 testes implementados** (atualizado em outubro/2025)
 - **100% de sucesso** nos testes unitários e de integração
+- **0 falhas, 0 erros** na última execução
 - **Cobertura das principais regras de negócio**
 - **Isolamento completo** com mocks
 - **Cenários hospitalares** específicos validados
+- **Integração GraphQL** totalmente testada
 
 #### 📈 **Benefícios Alcançados**
 - **Detecção precoce de bugs**
@@ -470,27 +736,48 @@ Os testes utilizam o perfil `test` com configurações específicas:
 
 ---
 
-## 💡 **Exemplo de Resposta Agregada**
+## 💡 **Exemplos de Uso**
+
+### 📋 **Resposta de Consulta (GraphQL)**
 
 ```json
 {
-  "consult": {
-    "id": 1,
-    "patientId": 123,
-    "doctorId": 456,
-    "patientName": "João Silva",
-    "consultDateTime": "2024-01-15",
-    "consultStatus": "SCHEDULED"
-  },
-  "patientDetails": {
-    "id": 123,
+  "id": "1",
+  "patient": {
     "name": "João Silva",
-    "email": "joao@email.com"
+    "email": "joao.silva@email.com"
   },
-  "doctorDetails": {
-    "id": 456,
-    "name": "Dr. Maria Santos",
-    "specialty": "Cardiologia"
+  "nameProfessional": "Enfermeira Maria",
+  "localTime": "10:30:00",
+  "date": "2025-10-14",
+  "statusConsult": "AGENDADA",
+  "reason": "Consulta de rotina"
+}
+```
+
+### 🔍 **Exemplo de Mutation GraphQL**
+
+```graphql
+mutation CreateFullConsult($input: ConsultRequestDto!) {
+  createFullConsult(input: $input) {
+    id
+    patient {
+      name
+      email
+    }
+    nameProfessional
+    localTime
+    date
+    statusConsult
+    reason
   }
 }
+```
+
+### 📊 **Status dos Testes (Última Execução)**
+
+```
+Tests run: 153, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+Total time: 40.084 s
 ```

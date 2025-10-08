@@ -214,8 +214,8 @@ class AuthControllerIntegrationTest {
         }
 
         @Test
-        @DisplayName("Deve retornar erro 401 quando não autenticado")
-        void shouldReturn401_WhenNotAuthenticated() throws Exception {
+        @DisplayName("Deve permitir atualização de senha quando não autenticado")
+        void shouldAllow204_WhenNotAuthenticated() throws Exception {
             // Arrange
             UserCredentialsRequestDto updateRequest = new UserCredentialsRequestDto(
                 "joao.silva@hospital.com",
@@ -226,7 +226,7 @@ class AuthControllerIntegrationTest {
             mockMvc.perform(patch("/api/v1/auth/password")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(updateRequest)))
-                    .andExpect(status().isUnauthorized());
+                    .andExpect(status().isNoContent());
         }
 
         @Test

@@ -5,6 +5,7 @@ import com.fiap.hospital.bff.infra.entrypoint.dto.request.TypeUsers;
 import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.dto.request.UserCredentialsRequestDto;
 import com.fiap.hospital.bff.infra.entrypoint.dto.request.ConsultRequestDto;
+import com.fiap.hospital.bff.infra.entrypoint.dto.request.PatientData;
 import com.fiap.hospital.bff.infra.entrypoint.dto.response.ConsultResponseDto;
 import com.fiap.hospital.bff.infra.persistence.entity.UserEntity;
 
@@ -86,11 +87,11 @@ public class TestDataBuilder {
     // ===== CONSULT DATA BUILDERS =====
 
     public static ConsultRequestDto createValidConsultRequestDto() {
+        PatientData patientData = new PatientData("João Silva", "joao.silva@hospital.com");
         return new ConsultRequestDto(
-            "João Silva",
-            "joao.silva@hospital.com",
-            "maria.santos@hospital.com",
-            LocalDate.now().plusDays(7),
+            patientData,
+            "2025-10-14",
+            "10:30:00",
             "Consulta de rotina"
         );
     }
@@ -122,11 +123,11 @@ public class TestDataBuilder {
     }
 
     public static ConsultRequestDto createInvalidConsultRequestDto() {
+        PatientData invalidPatientData = new PatientData("", "email-invalido");
         return new ConsultRequestDto(
-            "", // Nome vazio
-            "email-invalido", // Email inválido
-            "", // Email profissional vazio
-            LocalDate.now().minusDays(1), // Data no passado
+            invalidPatientData,
+            "2025-10-06", // Data no passado
+            "10:30:00",
             "" // Motivo vazio
         );
     }

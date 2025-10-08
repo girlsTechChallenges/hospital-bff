@@ -1,0 +1,33 @@
+_format_version: "3.0"
+services:
+- name: hospital-bff
+  url: http://app:8080
+  connect_timeout: 60000
+  write_timeout: 60000
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - name: auth
+    paths:
+    - /api/v1/auth
+    strip_path: false
+    path_handling: v1
+    protocols:
+    - http
+    - https
+  - name: users
+    paths:
+    - /api/v1/users
+    strip_path: false
+    path_handling: v1
+    protocols:
+    - http
+    - https
+  - name: easy-consult
+    paths:
+    - /api/v1/consults
+    strip_path: false
+    path_handling: v1
+    protocols:
+    - http
+    - https
