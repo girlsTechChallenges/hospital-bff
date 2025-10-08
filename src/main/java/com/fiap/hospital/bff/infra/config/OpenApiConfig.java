@@ -6,8 +6,11 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
@@ -24,6 +27,17 @@ public class OpenApiConfig {
                                 .email("contato@girlstechchallenges.com")
                         )
                 )
+                .servers(List.of(
+                        new Server()
+                                .url("http://localhost:8080")
+                                .description("Hospital API - Servidor Local (Desenvolvimento)"),
+                        new Server()
+                                .url("http://localhost:8000")
+                                .description("Hospital API - Kong Gateway (API Gateway)"),
+                        new Server()
+                                .url("https://api.hospital.com")
+                                .description("Hospital API - Produção (HTTPS)")
+                ))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()
